@@ -1,7 +1,9 @@
 # NoFair
-タイトル案
+
+# タイトル案
 なにかのパロディとか
 
+# 要素
 unfair
 battle
 freedom
@@ -16,9 +18,15 @@ fighter
 ぱんち
 キック
 Gun
+混ぜる
+MIXER
+MIX
 
 #　タイトル
 ・Gun!Gun!Sorcery!
-・UnfairBattle
-・ランバト
 ・UnfairStyle(アンフェアスタイル)
+・Unfair (シンプルに)
+・UnfairBattle
+・ランバト　（スマホゲームとかの呼びやすさ重視）
+・TOP
+・パ二ック＆トリック
