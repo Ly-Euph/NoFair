@@ -23,7 +23,7 @@ public class UIHitCheck : MonoBehaviour,IPointerEnterHandler, IPointerExitHandle
         obj_SelectPnl.SetActive(true);
 
         // UIManagerに関数登録
-        UIManager.Instance.RegisterCurrentAction(buttonName, clickAction);
+        UIManager.Instance.RegisterCurrentAction(buttonName, clickAction,obj_SelectPnl);
     }
 
     // カーソルがUIから出たとき呼ばれる

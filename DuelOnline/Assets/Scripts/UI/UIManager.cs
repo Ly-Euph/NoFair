@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
 
     private Action currentAction;    // 現在カーソルが乗っているボタンの処理
     private string currentButton = ""; // デバッグ用
+    private GameObject currentObj;   // パネルの非表示
 
     private void Awake()
     {
@@ -27,6 +28,7 @@ public class UIManager : MonoBehaviour
             {
                 Debug.Log($"[UIManager] {currentButton} のActionを実行します");
                 currentAction.Invoke();
+                currentObj.SetActive(false);
             }
             else
             {
@@ -38,10 +40,11 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// 現在カーソルが当たっているUIのアクションを登録
     /// </summary>
-    public void RegisterCurrentAction(string buttonName, Action action)
+    public void RegisterCurrentAction(string buttonName, Action action,GameObject obj)
     {
         currentButton = buttonName;
         currentAction = action;
+        currentObj = obj;
     }
 
     /// <summary>
