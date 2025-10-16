@@ -1003,8 +1003,8 @@ GameObject:
   - component: {fileID: 4293950058502463399}
   - component: {fileID: 4262468254321368569}
   m_Layer: 0
-  m_Name: PolyArtWizardMaskTintMat
-  m_TagString: Untagged
+  m_Name: Player_Red
+  m_TagString: PlRed
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3689,8 +3689,8 @@ GameObject:
   - component: {fileID: 8390776603111969362}
   - component: {fileID: 8414183184100432670}
   m_Layer: 0
-  m_Name: PolyArtWizardStandardMat
-  m_TagString: Untagged
+  m_Name: Player_Blue
+  m_TagString: PlBlue
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
