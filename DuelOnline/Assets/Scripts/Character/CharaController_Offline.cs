@@ -14,6 +14,8 @@ public class CharaController_Offline : CharacterBase
     {
         // インスペクターで設定した値を元にデフォルトカラーを決める
         DefCol = new Color(r / 255f, g / 255f, b / 255f);
+        // カラーチェンジ
+        material.color = DefCol;
         // アイドル状態
         animNum = 0;
         AnimSet();

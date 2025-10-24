@@ -7851,16 +7851,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4234934059787292073}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f2a9b89595d32b94e9ae1e1bb801f53c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 4293950058502463399}
-  material: {fileID: 0}
-  r: 0
-  g: 0
-  b: 0
+  material: {fileID: 2100000, guid: acfcce20b5b807e4d9631a2002cf9c36, type: 2}
+  r: 255
+  g: 127
+  b: 115
 --- !u!33 &4689116239157216023
 MeshFilter:
   m_ObjectHideFlags: 0
