@@ -9,6 +9,8 @@ public abstract class CharacterBase : MonoBehaviour
     protected int hp = 4; //体力
     protected int mp = 1; //マナ
 
+    protected bool isDead = false;
+
     // プレイヤーの防御あたり判定
     [SerializeField]protected BoxCollider DefColBox;
     // 魔法生成場所
@@ -22,7 +24,8 @@ public abstract class CharacterBase : MonoBehaviour
     protected string[] animName =
     {
        "Chara_IDLE","Chara_CAST_S","Chara_CAST_L",
-       "Chara_CHARGE","Chara_BLOCK","Chara_DAMAGE"
+       "Chara_CHARGE","Chara_BLOCK","Chara_DAMAGE",
+       "Chara_DIE"
     };
     protected int animNum=0; // アニメーション取り扱い番号
 
@@ -73,7 +76,7 @@ public abstract class CharacterBase : MonoBehaviour
         animator.Play(animName[animNum]);
         Debug.Log("アニメーション変更");
     }
-
+    // 弱魔法
     void GenerateSMagicEvent()
     {
         GameObject obj= Instantiate(SBulletPre, BulletPos.transform.position, Quaternion.identity);
@@ -81,7 +84,7 @@ public abstract class CharacterBase : MonoBehaviour
         //自分プレイヤーオブジェクトと反対の位置を指定
         obj.GetComponent<Bullet>().SetDirectionByTargetX(-transform.position.x);
     }
-
+    // 強魔法
     void GenerateLMagicEvent()
     {
         GameObject obj = Instantiate(LBulletPre, BulletPos.transform.position, Quaternion.identity);
@@ -89,7 +92,10 @@ public abstract class CharacterBase : MonoBehaviour
         //自分プレイヤーオブジェクトと反対の位置を指定
         obj.GetComponent<LBullet>().SetDirectionByTargetX(-transform.position.x);
     }
-
+    void DeadEvent()
+    {
+        animator.enabled = false;
+    }
     // 防御アニメーションイベント設定用
   　void BlockAnimEventSet()
     {
@@ -133,9 +139,9 @@ public abstract class CharacterBase : MonoBehaviour
         }
 
         // --- 3️⃣ Z字（折れ線） ---
-        if (IsZShape(pts))
+        if (IsVShape(pts))
         {
-            Debug.Log("Command C: Z字ジェスチャー");
+            Debug.Log("Command C: V字ジェスチャー");
             OnZ();
             return;
         }
@@ -153,18 +159,19 @@ public abstract class CharacterBase : MonoBehaviour
 
     // ---- 判定関数 ----
 
-    private bool IsZShape(List<Vector2> pts)
+    private bool IsVShape(List<Vector2> pts)
     {
-        // Z字: X増加、Y減少 → X増加、Y減少を含む
+        if (pts.Count < 10) return false;
+
         int mid = pts.Count / 2;
-        Vector2 first = pts[0];
+        Vector2 start = pts[0];
         Vector2 middle = pts[mid];
-        Vector2 last = pts[^1];
+        Vector2 end = pts[^1];
 
-        bool diag1 = (middle.x > first.x + 50 && middle.y < first.y - 30);
-        bool diag2 = (last.x > middle.x + 50 && last.y < middle.y - 30);
+        bool downThenUp = middle.y < start.y - 40 && end.y > middle.y + 40;
+        float xMove = Mathf.Abs(end.x - start.x);
 
-        return diag1 && diag2;
+        return downThenUp && xMove < 150f; // 横ずれが少ないほど良い
     }
     private bool IsCircle(List<Vector2> pts)
     {

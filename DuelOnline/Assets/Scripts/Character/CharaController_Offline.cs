@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 public class CharaController_Offline : CharacterBase
 {
@@ -15,14 +15,14 @@ public class CharaController_Offline : CharacterBase
     // NPCかどうか基本的にはfalseかな
     [SerializeField]bool isBot = false;
     [SerializeField] bool isHostPlayer = false;
-
+    
     #region Bot
     private delegate void ActionDelegate();
     private ActionDelegate[] actions;
     private float[] actionProbabilities; // 各行動の割合（合計1.0）
     private float timer = 0;
     // NPC専用で行動時間を制御する
-    private bool isAct = false;
+    private bool isAct = true;
     #endregion
     private void Awake()
     {
@@ -44,25 +44,41 @@ public class CharaController_Offline : CharacterBase
     }
     public void Update()
     {
-        // 硬直時間
-        if (Delayflg)
-        {
-            ResetFlag();
-            Debug.Log("硬直中");
-            return;
+        // 操作不能
+        if (isDead) {
+            return; 
         }
-        if (isBot)
+        // HPなくなったら
+        if (hp <= 0)
         {
-            if (isAct) {
-                CTTimer();
-                return; }
-            PerformAction();
-            isAct = true;
+            animNum = 6;
+            AnimSet();
+            isDead = true;
         }
         else
         {
-            InputController();
-            Debug.Log(mp);
+            // 硬直時間
+            if (Delayflg)
+            {
+                ResetFlag();
+                Debug.Log("硬直中");
+                return;
+            }
+            if (isBot)
+            {
+                if (isAct)
+                {
+                    CTTimer();
+                    return;
+                }
+                PerformAction();
+                isAct = true;
+            }
+            else
+            {
+                InputController();
+                Debug.Log(mp);
+            }
         }
     }
     public override void SAttack()
@@ -115,6 +131,8 @@ public class CharaController_Offline : CharacterBase
     /// <param name="isSmall">弱魔法ならtrue</param>
     public override void Damage(bool isSmall)
     {
+        // 死んでいた場合は動かさない
+        if (isDead) { return; }
         animNum = 5;
         if (isSmall)
         {
@@ -158,7 +176,6 @@ public class CharaController_Offline : CharacterBase
         }
     }
 
-
     #region BotMethod
     private void BotAwake()
     {
@@ -166,13 +183,16 @@ public class CharaController_Offline : CharacterBase
         actions = new ActionDelegate[] { SAttack, LAttack, Charge, Block };
 
         // 各行動の基本確率
-        actionProbabilities = new float[] { 0.4f, 0.1f, 0.3f, 0.2f };
+        actionProbabilities = new float[] { 0.3f, 0.2f, 0.3f, 0.2f };
     }
     private void PerformAction()
     {
+        // 状況に応じて確率を更新
+        UpdateProbabilities();
+
         // 使用可能な行動をリストアップ
-        var validActions = new System.Collections.Generic.List<ActionDelegate>();
-        var validProbs = new System.Collections.Generic.List<float>();
+        var validActions = new List<ActionDelegate>();
+        var validProbs = new List<float>();
 
         for (int i = 0; i < actions.Length; i++)
         {
@@ -199,25 +219,59 @@ public class CharaController_Offline : CharacterBase
         }
     }
 
+    /// <summary>
+    /// 状況に応じて確率を更新
+    /// </summary>
+    private void UpdateProbabilities()
+    {
+        float sAttack = 0.3f;
+        float lAttack = 0.2f;
+        float charge = 0.3f;
+        float block = 0.2f;
+
+        // --- HPが少ないほど防御・強攻撃寄りに ---
+        if (hp <= 2)
+        {
+            sAttack = 0.2f;
+            lAttack = 0.3f;
+            charge  = 0.3f;
+            block   = 0.2f;
+        }
+        // --- MPが少ないほどチャージ優先 ---
+        if (mp < 1)
+        {
+            sAttack = 0.2f;
+            lAttack = 0.1f;
+            charge  = 0.5f;
+        }
+
+        // 正規化（合計1.0にする）
+        float total = sAttack + lAttack + charge + block;
+        actionProbabilities[0] = sAttack / total;
+        actionProbabilities[1] = lAttack / total;
+        actionProbabilities[2] = charge / total;
+        actionProbabilities[3] = block / total;
+    }
+
     private bool IsActionUsable(int actionIndex)
     {
         switch (actionIndex)
         {
             case 0: return mp >= 1; // SAttack
-            case 1: return mp >= 3; // Lttack
+            case 1: return mp >= 3; // LAttack
             case 2: return true;    // Charge
             case 3: return true;    // Block
             default: return false;
         }
     }
-    // クールタイム計算
+
+    // クールタイム管理
     private void CTTimer()
     {
         timer += Time.deltaTime;
-        if (timer >= 0.3f)
+        if (timer >= 0.5f)
         {
             timer = 0;
-            // 再行動
             isAct = false;
         }
     }

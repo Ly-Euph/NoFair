@@ -48,7 +48,8 @@ public class LBullet : MonoBehaviour
         {
             DestroyBullet();
         }
-        else //G‚ê‚½‚à‚Ì‚ğÁ‚·
+        else if (other.CompareTag("Defense")) { return; } // –hŒä”»’è‚ÍŠÑ’Ê
+        else // ã–‚–@‚ÍÁ‚µ‚Ä‚¢‚­
         {
             Destroy(other.gameObject);
         }
