@@ -8,14 +8,22 @@ public class DataSingleton_Offline : DataBase
         base.Awake();
     }
 
-    //public override int EmHP
-    //{
-    //    get { return emhp; }
-    //    set { emhp = value; }
-    //}
-    //public override int PlHP
-    //{
-    //    get { return plhp; }
-    //    set { plhp = value; }
-    //}
+    override public int PlHP
+    {
+        get { return plhp; }
+        set { plhp = value; }
+    }
+    override public int PlMP
+    {
+        get { return plmp; }
+        set { 
+            plmp = value;
+            Debug.Log("MPÉ`ÉÉÅ[ÉW");
+        }
+    }
+    override public int EmHP
+    {
+        get { return emhp; }
+        set { emhp = value; }
+    }
 }

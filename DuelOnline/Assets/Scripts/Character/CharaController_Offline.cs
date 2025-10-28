@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 public class CharaController_Offline : CharacterBase
 {
@@ -10,6 +11,19 @@ public class CharaController_Offline : CharacterBase
     [SerializeField] float r, g, b;
     Color ActionCol = new Color(186f / 255f, 0f / 255f, 255f / 255f); // 行動中のカラー
     Color DefCol; // 行動可能状態
+
+    // NPCかどうか基本的にはfalseかな
+    [SerializeField]bool isBot = false;
+    [SerializeField] bool isHostPlayer = false;
+
+    #region Bot
+    private delegate void ActionDelegate();
+    private ActionDelegate[] actions;
+    private float[] actionProbabilities; // 各行動の割合（合計1.0）
+    private float timer = 0;
+    // NPC専用で行動時間を制御する
+    private bool isAct = false;
+    #endregion
     private void Awake()
     {
         // インスペクターで設定した値を元にデフォルトカラーを決める
@@ -19,17 +33,37 @@ public class CharaController_Offline : CharacterBase
         // アイドル状態
         animNum = 0;
         AnimSet();
+        // 防御判定を消しておく
+        DefColBox.enabled = false;
+
+        // Botのみの設定
+        if (isBot)
+        {
+            BotAwake();
+        }
     }
     public void Update()
     {
         // 硬直時間
-        if (Delayflg) {
+        if (Delayflg)
+        {
             ResetFlag();
             Debug.Log("硬直中");
             return;
         }
-        InputController();
-        Debug.Log(mp);
+        if (isBot)
+        {
+            if (isAct) {
+                CTTimer();
+                return; }
+            PerformAction();
+            isAct = true;
+        }
+        else
+        {
+            InputController();
+            Debug.Log(mp);
+        }
     }
     public override void SAttack()
     {
@@ -38,7 +72,10 @@ public class CharaController_Offline : CharacterBase
         if (mp <= 0) { return; }
         else { mp--; }
         // 反映
-        DataSingleton_Offline.Instance.PlMP = mp;
+        if (isHostPlayer)
+        {
+            DataSingleton_Offline.Instance.PlMP = mp;
+        }
         AnimSet();
     }
     public override void LAttack()
@@ -48,7 +85,10 @@ public class CharaController_Offline : CharacterBase
         if (mp <= 2) { return; }
         else { mp = mp - 3; }
         // 反映
-        DataSingleton_Offline.Instance.PlMP = mp;
+        if (isHostPlayer)
+        {
+            DataSingleton_Offline.Instance.PlMP = mp;
+        }
         AnimSet();
     }
     public override void Charge()
@@ -58,7 +98,10 @@ public class CharaController_Offline : CharacterBase
         if (mp >= MAX) { return; }
         else { mp++; }
         // 反映
-        DataSingleton_Offline.Instance.PlMP = mp;
+        if (isHostPlayer)
+        {
+            DataSingleton_Offline.Instance.PlMP = mp;
+        }
         AnimSet();
     }
     public override void Block()
@@ -66,12 +109,34 @@ public class CharaController_Offline : CharacterBase
         animNum = 4;
         AnimSet();
     }
-    public override void Damage()
+    /// <summary>
+    /// ダメージヒット処理
+    /// </summary>
+    /// <param name="isSmall">弱魔法ならtrue</param>
+    public override void Damage(bool isSmall)
     {
         animNum = 5;
+        if (isSmall)
+        {
+            hp--;
+        }
+        else
+        {
+            hp -= 2;
+        }
+        // UI反映
+        if (isHostPlayer)
+        {
+            DataSingleton_Offline.Instance.PlHP = hp;
+        }
+        else
+        {
+            DataSingleton_Offline.Instance.EmHP = hp;
+        }
         AnimSet();
     }
 
+    // アニメーション起動時のイベント
     void StartAnim(float frame)
     {
         Delayflg = true;
@@ -93,4 +158,68 @@ public class CharaController_Offline : CharacterBase
         }
     }
 
+
+    #region BotMethod
+    private void BotAwake()
+    {
+        // 行動を配列に登録
+        actions = new ActionDelegate[] { SAttack, LAttack, Charge, Block };
+
+        // 各行動の基本確率
+        actionProbabilities = new float[] { 0.4f, 0.1f, 0.3f, 0.2f };
+    }
+    private void PerformAction()
+    {
+        // 使用可能な行動をリストアップ
+        var validActions = new System.Collections.Generic.List<ActionDelegate>();
+        var validProbs = new System.Collections.Generic.List<float>();
+
+        for (int i = 0; i < actions.Length; i++)
+        {
+            if (IsActionUsable(i))
+            {
+                validActions.Add(actions[i]);
+                validProbs.Add(actionProbabilities[i]);
+            }
+        }
+
+        // 確率に応じてランダム選択
+        float total = 0;
+        foreach (var p in validProbs) total += p;
+        float rand = UnityEngine.Random.value * total;
+        float sum = 0;
+        for (int i = 0; i < validActions.Count; i++)
+        {
+            sum += validProbs[i];
+            if (rand <= sum)
+            {
+                validActions[i].Invoke();
+                break;
+            }
+        }
+    }
+
+    private bool IsActionUsable(int actionIndex)
+    {
+        switch (actionIndex)
+        {
+            case 0: return mp >= 1; // SAttack
+            case 1: return mp >= 3; // Lttack
+            case 2: return true;    // Charge
+            case 3: return true;    // Block
+            default: return false;
+        }
+    }
+    // クールタイム計算
+    private void CTTimer()
+    {
+        timer += Time.deltaTime;
+        if (timer >= 0.3f)
+        {
+            timer = 0;
+            // 再行動
+            isAct = false;
+        }
+    }
+    #endregion
 }

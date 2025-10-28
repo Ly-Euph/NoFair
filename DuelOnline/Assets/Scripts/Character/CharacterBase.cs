@@ -9,7 +9,13 @@ public abstract class CharacterBase : MonoBehaviour
     protected int hp = 4; //体力
     protected int mp = 1; //マナ
 
-
+    // プレイヤーの防御あたり判定
+    [SerializeField]protected BoxCollider DefColBox;
+    // 魔法生成場所
+    [SerializeField]protected GameObject BulletPos;
+    // 魔法実態(L:強魔法,S:弱魔法)
+    [SerializeField]protected GameObject LBulletPre;
+    [SerializeField]protected GameObject SBulletPre;
     // アニメーションコンポーネント
     [SerializeField] Animator animator;
     // アニメーション
@@ -23,26 +29,7 @@ public abstract class CharacterBase : MonoBehaviour
     // 入力制御
     private List<Vector2> points = new List<Vector2>();
     private bool isDrawing = false;
-   
-    // 弱魔法
-    public abstract void SAttack();
-    // 強魔法
-    public abstract void LAttack();
-    // チャージ
-    public abstract void Charge();
-    // 防御
-    public abstract void Block();
-    // ダメージヒット
-    public abstract void Damage();
-    protected void CommonUpdate()
-    {
-        // 物理・アニメーション・入力など共通更新
-    }
-    protected void AnimSet()
-    {
-        animator.Play(animName[animNum]);
-        Debug.Log("アニメーション変更");
-    }
+
     // 入力制御
     protected void InputController()
     {
@@ -66,6 +53,54 @@ public abstract class CharacterBase : MonoBehaviour
             AnalyzeGesture(points);
         }
     }
+
+    // 弱魔法
+    public abstract void SAttack();
+    // 強魔法
+    public abstract void LAttack();
+    // チャージ
+    public abstract void Charge();
+    // 防御
+    public abstract void Block();
+    // ダメージヒット
+    public abstract void Damage(bool isSmall);
+
+    // アニメーションイベント制御
+    #region
+    // アニメーション発動用
+    protected void AnimSet()
+    {
+        animator.Play(animName[animNum]);
+        Debug.Log("アニメーション変更");
+    }
+
+    void GenerateSMagicEvent()
+    {
+        GameObject obj= Instantiate(SBulletPre, BulletPos.transform.position, Quaternion.identity);
+        obj.transform.SetParent(BulletPos.transform);
+        //自分プレイヤーオブジェクトと反対の位置を指定
+        obj.GetComponent<Bullet>().SetDirectionByTargetX(-transform.position.x);
+    }
+
+    void GenerateLMagicEvent()
+    {
+        GameObject obj = Instantiate(LBulletPre, BulletPos.transform.position, Quaternion.identity);
+        obj.transform.SetParent(BulletPos.transform);
+        //自分プレイヤーオブジェクトと反対の位置を指定
+        obj.GetComponent<LBullet>().SetDirectionByTargetX(-transform.position.x);
+    }
+
+    // 防御アニメーションイベント設定用
+  　void BlockAnimEventSet()
+    {
+        // オブジェクトを有効化
+        DefColBox.enabled = true;
+    }
+    void DeleteBlockEvent()
+    {
+        DefColBox.enabled = false;
+    }
+    #endregion
 
     // 入力制御の関数
     #region 
@@ -153,25 +188,25 @@ public abstract class CharacterBase : MonoBehaviour
     private void OnHorizontal()
     {
         Debug.Log("▶ 横アクション発動！");
-        Charge();
+        Charge(); //マナチャージ
     }
 
     private void OnVertical()
     {
         Debug.Log("▲ 縦アクション発動！");
-        Block();
+        Block(); //防御
     }
 
     private void OnZ()
     {
         Debug.Log("⚡ Zアクション発動！");
-        LAttack();
+        LAttack(); //強魔法攻撃
     }
 
     private void OnCircle()
     {
         Debug.Log("⭕ 円アクション発動！");
-        SAttack();
+        SAttack(); //弱魔法攻撃
     }
     #endregion
 }
