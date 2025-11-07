@@ -138,11 +138,11 @@ public abstract class CharacterBase : MonoBehaviour
             return;
         }
 
-        // --- 3️⃣ Z字（折れ線） ---
+        // --- 3️⃣ V字（折れ線） ---
         if (IsVShape(pts))
         {
             Debug.Log("Command C: V字ジェスチャー");
-            OnZ();
+            OnV();
             return;
         }
 
@@ -204,9 +204,9 @@ public abstract class CharacterBase : MonoBehaviour
         Block(); //防御
     }
 
-    private void OnZ()
+    private void OnV()
     {
-        Debug.Log("⚡ Zアクション発動！");
+        Debug.Log("⚡ Vアクション発動！");
         LAttack(); //強魔法攻撃
     }
 
