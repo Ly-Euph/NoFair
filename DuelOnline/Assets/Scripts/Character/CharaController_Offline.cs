@@ -45,7 +45,7 @@ public class CharaController_Offline : CharacterBase
     public void Update()
     {
         // ‘€ì•s”\
-        if (isDead) {
+        if (isDead||!DataSingleton_Offline.Instance.IsReady) {
             return; 
         }
         // HP‚È‚­‚È‚Á‚½‚ç

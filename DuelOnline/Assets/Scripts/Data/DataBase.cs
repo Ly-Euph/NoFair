@@ -8,7 +8,7 @@ public abstract class DataBase : MonoBehaviour
     protected int plhp=4; // Ž©•ª
     protected int plmp=1; // Ž©•ª
     protected int emhp=4; // ‘ŠŽè
-
+    protected bool isReady = false; // ‘Ò‹@
     public static DataBase Instance { get; protected set; }
 
 
@@ -39,5 +39,11 @@ public abstract class DataBase : MonoBehaviour
     {
         get { return emhp; }
         set { emhp = value; }
+    }
+
+    virtual public bool IsReady
+    {
+        get { return isReady; }
+        set { isReady = value; }
     }
 }
