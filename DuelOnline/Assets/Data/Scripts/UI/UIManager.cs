@@ -29,6 +29,7 @@ public class UIManager : MonoBehaviour
                 Debug.Log($"[UIManager] {currentButton} ‚ÌAction‚ğÀs‚µ‚Ü‚·");
                 currentAction.Invoke();
                 currentObj.SetActive(false);
+                AudioManager.Instance.PlaySE(0);
             }
             else
             {

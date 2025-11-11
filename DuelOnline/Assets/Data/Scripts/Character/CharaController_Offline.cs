@@ -53,6 +53,8 @@ public class CharaController_Offline : CharacterBase
         {
             animNum = 6;
             AnimSet();
+            // カラーチェンジ
+            material.color = ActionCol;
             isDead = true;
         }
         else
@@ -140,7 +142,7 @@ public class CharaController_Offline : CharacterBase
         }
         else
         {
-            hp -= 2;
+            hp -= 1;
         }
         // UI反映
         if (isHostPlayer)

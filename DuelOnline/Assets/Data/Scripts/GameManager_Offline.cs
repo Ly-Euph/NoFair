@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 public class GameManager_Offline : MonoBehaviour
 {
     // ‚±‚±‚ÉÅ‰‚Ì‰æ–Ê‚ªo‚é
@@ -14,7 +13,6 @@ public class GameManager_Offline : MonoBehaviour
         Player2Win,
         Draw
     }
-    BattleResult result = BattleResult.None;
 
     // ‰Šú”Ô†0
     private int switchNo = 0;
