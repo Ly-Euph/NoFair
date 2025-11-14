@@ -45,9 +45,10 @@ public class CharaController_Offline : CharacterBase
     public void Update()
     {
         // 操作不能
-        if (isDead||!DataSingleton_Offline.Instance.IsReady) {
-            return; 
-        }
+        /* ----条件---- */
+        // 自分の死亡時、相手の死亡時
+        // ゲームマネージャーの対戦合図待ち
+        if (isDead||!DataSingleton_Offline.Instance.IsReady) { return; }
         // HPなくなったら
         if (hp <= 0)
         {
@@ -57,7 +58,8 @@ public class CharaController_Offline : CharacterBase
             material.color = ActionCol;
             isDead = true;
         }
-        else
+        // お互いのプレイヤーが生存しているのなら
+        else if(DataSingleton_Offline.Instance.PlHP>=1&&DataSingleton_Offline.Instance.EmHP>=1)
         {
             // 硬直時間
             if (Delayflg)
@@ -244,7 +246,8 @@ public class CharaController_Offline : CharacterBase
         {
             sAttack = 0.2f;
             lAttack = 0.1f;
-            charge  = 0.5f;
+            charge  = 0.4f;
+            block   = 0.3f;
         }
 
         // 正規化（合計1.0にする）
@@ -271,7 +274,7 @@ public class CharaController_Offline : CharacterBase
     private void CTTimer()
     {
         timer += Time.deltaTime;
-        if (timer >= 0.5f)
+        if (timer >= 0.7f)
         {
             timer = 0;
             isAct = false;

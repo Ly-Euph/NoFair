@@ -41,5 +41,7 @@ public class AlphaFade : MonoBehaviour
         // ÅI’l‚ğŠmÀ‚É”½‰f
         c.a = endAlpha;
         tmpText.color = c;
+
+        this.gameObject.GetComponent<AlphaFade>().enabled = false;
     }
 }

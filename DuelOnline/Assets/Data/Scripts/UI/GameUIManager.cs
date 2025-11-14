@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using System.Collections;
 
 public class GameUIManager : MonoBehaviour
 {
@@ -47,6 +49,54 @@ public class GameUIManager : MonoBehaviour
             hpImg[i].color = (i < hp) ? hpCol_true : hpCol_false;
             EmhpImg[i].color = (i < emhp) ? hpCol_true : hpCol_false;
             mpImg[i].color = (i < mp) ? mpCol_true : mpCol_false;
+        }
+    }
+
+    /// <summary>
+    /// 勝利者をテキスト表示
+    /// </summary>
+    /// <param name="isPlayer1">Player1=true,Player2=false</param>
+    public void WinEff(bool isPlayer1)
+    {
+        // コンポーネント取得
+        TextMeshProUGUI tmpText = GameObject.Find("GameText").GetComponent<TextMeshProUGUI>();
+        // テキストカラーを表示状態へ
+        tmpText.alpha = 1f;
+
+        string plName = isPlayer1 ? "Player1" : "Player2"; // プレイヤーの判定
+        string globalText = "WIN";// ここは共通テキスト
+        string FusionText = plName + globalText;
+
+        // 表示用コルーチン
+        StartCoroutine(ShowWinSequence(tmpText, FusionText));
+    }
+
+    /// <summary>
+    /// K.O → Player名＋改行＋WIN を一文字ずつ順に表示
+    /// </summary>
+    private IEnumerator ShowWinSequence(TextMeshProUGUI tmp, string fusionText)
+    {
+        // まずクリア
+        tmp.text = "";
+
+        // --- ① K.O を1文字ずつ表示 ---
+        string ko = "K.O";
+        foreach (char c in ko)
+        {
+            tmp.text += c;
+            yield return new WaitForSeconds(0.05f); // 表示速度
+        }
+
+        // 少し待つ
+        yield return new WaitForSeconds(0.5f);
+
+        // --- ② FusionText をクリアして1文字ずつ表示 ---
+        tmp.text = "";
+        foreach (char c in fusionText)
+        {
+            if (c == 'W') { tmp.text+="\n"; }
+            tmp.text += c;
+            yield return new WaitForSeconds(0.05f); // 表示速度
         }
     }
 }

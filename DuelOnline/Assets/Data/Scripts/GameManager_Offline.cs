@@ -5,6 +5,10 @@ public class GameManager_Offline : MonoBehaviour
     // オブジェクトフォルダ
     [SerializeField] GameObject startObj;
     [SerializeField] GameObject gameCanvas;
+
+    // フェード開始までの時間
+    float ctTimer = 2.5f;
+
     // 勝敗結果を表す列挙型
     public enum BattleResult
     {
@@ -50,17 +54,31 @@ public class GameManager_Offline : MonoBehaviour
                     case BattleResult.Player1Win:
                         // P1勝利処理
                         Debug.Log("P1");
+                        WinsPlayer(true);
                         break;
 
                     case BattleResult.Player2Win:
                         // P2勝利処理
                         Debug.Log("P2");
+                        WinsPlayer(false);
                         break;
 
                     case BattleResult.Draw:
                         // 両者同時撃破
                         Debug.Log("W");
                         break;
+                }
+                break;
+            case 2:
+                ctTimer -= Time.deltaTime;
+                if(ctTimer<=0)
+                {
+                    FadeInOut fadeScr; // フェード機能
+                   
+                    fadeScr = FadeInOut.CreateInstance();
+
+                    fadeScr.LoadScene("Title");
+                    switchNo++;
                 }
                 break;
         }
@@ -85,4 +103,13 @@ public class GameManager_Offline : MonoBehaviour
         return isDeadP1 ? BattleResult.Player2Win : BattleResult.Player1Win;
     }
 
+    // 勝利者をテキスト表示
+    // プレイヤー1=true,Player2=false
+    private void WinsPlayer(bool isPlayer1)
+    {
+        GameUIManager gameUI = GameObject.Find("UIManager").GetComponent<GameUIManager>();
+
+        gameUI.WinEff(isPlayer1);
+        switchNo++;
+    }
 }
