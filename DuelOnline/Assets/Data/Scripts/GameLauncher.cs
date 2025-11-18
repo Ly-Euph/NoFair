@@ -1,23 +1,30 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
- public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
+/// <summary>
+/// ゲームマッチングの起動と管理を行うクラス
+/// NetworkRunner を生成してマッチング処理、シーン遷移、セッション退出までを管理
+/// </summary>
+public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
 {
-    [SerializeField]
-    private NetworkRunner networkRunnerPrefab;
-    [SerializeField]
-    private NetworkPrefabRef playerAvatarPrefab;
+    [Header("Prefabs")]
+    [SerializeField] private NetworkRunner networkRunnerPrefab; // Runnerプレハブ
+    [SerializeField] private NetworkPrefabRef playerAvatarPrefab; // プレイヤーアバタープレハブ
 
-    // 接続状況
+    // 実際に生成された NetworkRunner のインスタンス
+    private NetworkRunner activeRunner;
+
+    // マッチング状態
     private bool isMatch = false;
+    public bool GetMatchState => isMatch;
 
+    // シングルトン化
     public static GameLauncher Instance { get; private set; }
-
-    public bool GetMatchState { get { return isMatch; } }
 
     private void Awake()
     {
@@ -27,53 +34,84 @@ using UnityEngine;
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject); // シーン切り替えでも保持
     }
 
+    /// <summary>
+    /// マッチング開始
+    /// </summary>
     public async void Match()
     {
-        var networkRunner = Instantiate(networkRunnerPrefab);
-        // GameLauncherを、NetworkRunnerのコールバック対象に追加する
-        networkRunner.AddCallbacks(this);
+        // RunnerをPrefabから生成
+        activeRunner = Instantiate(networkRunnerPrefab);
+        // コールバック対象に自身を登録
+        activeRunner.AddCallbacks(this);
 
-        await networkRunner.StartGame(new StartGameArgs
+        // マッチング開始（Sharedモード）
+        await activeRunner.StartGame(new StartGameArgs
         {
             GameMode = GameMode.Shared
         });
     }
 
-    void INetworkRunnerCallbacks.OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
-    void INetworkRunnerCallbacks.OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
-    // プレイヤーがセッションへ参加した時に呼ばれるコールバック
+    /// <summary>
+    /// プレイヤーがセッションに参加した際に呼ばれる
+    /// </summary>
     void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
+        Debug.Log($"Player Joined: {player.PlayerId}");
 
-        Debug.Log("接続");
-        // ローカルプレイヤー以外なら「相手が入ってきた」
+        // ローカルプレイヤー以外なら相手が入ってきた
         if (player != runner.LocalPlayer)
         {
-            // 表示用コルーチン
             StartCoroutine(NowMatch());
-            // 自分自身がマスタークライアントかどうかを判定する
-            if (networkRunnerPrefab.IsSharedModeMasterClient)
-            {
-                Debug.Log("自分自身がマスタークライアントです");
-            }
+
+            // マスタークライアント判定
+            if (runner.IsSharedModeMasterClient)
+                Debug.Log("自分がマスタークライアントです");
             else
-            {
                 Debug.Log("クライアントです");
-            }
 
             isMatch = true;
-        }  
+        }
     }
+
+    /// <summary>
+    /// マッチング後に少し待ってゲームシーンへ遷移
+    /// </summary>
     private IEnumerator NowMatch()
     {
         yield return new WaitForSeconds(0.8f);
-        // シーン遷移
+
+        // フェードを使ってシーン遷移（FadePoolManager でプール管理）
         FadePoolManager.Instance.GetFade().LoadScene("GameOnline");
-        yield break; // ← この行でコルーチン終了
+
+        yield break;
     }
-    void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
+
+    /// <summary>
+    /// セッションを安全に退出
+    /// </summary>
+    public void LeaveSession()
+    {
+        if (activeRunner != null && activeRunner.IsRunning)
+        {
+            activeRunner.Shutdown(); // ルームを離脱 + Runner停止
+            activeRunner = null;
+        }
+    }
+
+    // -----------------------------------
+    // INetworkRunnerCallbacks の未使用コールバック
+    // 必須実装のため空メソッドを定義
+    // -----------------------------------
+    void INetworkRunnerCallbacks.OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
+    void INetworkRunnerCallbacks.OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
+    void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player) {
+        LeaveSession();
+        // タイトルに戻す
+        FadePoolManager.Instance.GetFade().LoadScene("Title");
+    }
     void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input) { }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     void INetworkRunnerCallbacks.OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }

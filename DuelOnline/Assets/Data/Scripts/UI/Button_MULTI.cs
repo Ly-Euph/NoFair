@@ -11,10 +11,16 @@ public class Button_MULTI : MonoBehaviour
     string text = "マッチング中";
     char dot = '.';
     // オンラインのマッチング
+
+    public void Awake()
+    {
+       
+    }
     public void OnClick()
     {
         var Ins = GameLauncher.Instance;
-
+        // 念のため切断
+        Ins.LeaveSession();
         // マッチングだよと分かりやすく
         canvas.SetActive(true);
 
