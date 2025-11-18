@@ -73,11 +73,7 @@ public class GameManager_Offline : MonoBehaviour
                 ctTimer -= Time.deltaTime;
                 if(ctTimer<=0)
                 {
-                    FadeInOut fadeScr; // フェード機能
-                   
-                    fadeScr = FadeInOut.CreateInstance();
-
-                    fadeScr.LoadScene("Title");
+                    FadePoolManager.Instance.GetFade().LoadScene("Title");
                     switchNo++;
                 }
                 break;

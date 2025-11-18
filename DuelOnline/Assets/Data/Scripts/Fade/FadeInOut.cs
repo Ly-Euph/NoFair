@@ -46,11 +46,14 @@ public class FadeInOut : MonoBehaviour
 
     private IEnumerator FadeOutAndChangeScene(string sceneName)
     {
+        fadeImage.enabled = true;
         yield return Fade(0, 1); // フェードアウト
         SceneManager.LoadScene(sceneName);
         yield return new WaitForSeconds(0.1f);
         yield return Fade(1, 0); // フェードイン
-        Destroy(gameObject); // シーン遷移後にオブジェクト削除
+
+        // プールに戻す
+        FadePoolManager.Instance.ReleaseFade(this);
     }
 
     private IEnumerator Fade(float startAlpha, float endAlpha)

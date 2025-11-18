@@ -48,14 +48,11 @@ using UnityEngine;
     {
 
         Debug.Log("接続");
-
-        FadeInOut fadeScr; // フェード機能
-        fadeScr = FadeInOut.CreateInstance();
         // ローカルプレイヤー以外なら「相手が入ってきた」
         if (player != runner.LocalPlayer)
         {
             // 表示用コルーチン
-            StartCoroutine(NowMatch(fadeScr));
+            StartCoroutine(NowMatch());
             // 自分自身がマスタークライアントかどうかを判定する
             if (networkRunnerPrefab.IsSharedModeMasterClient)
             {
@@ -69,11 +66,11 @@ using UnityEngine;
             isMatch = true;
         }  
     }
-    private IEnumerator NowMatch(FadeInOut fadeInOut)
+    private IEnumerator NowMatch()
     {
         yield return new WaitForSeconds(0.8f);
         // シーン遷移
-        fadeInOut.LoadScene("GameOnline");
+        FadePoolManager.Instance.GetFade().LoadScene("GameOnline");
         yield break; // ← この行でコルーチン終了
     }
     void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
