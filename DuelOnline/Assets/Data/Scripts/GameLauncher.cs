@@ -50,8 +50,9 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
         // マッチング開始（Sharedモード）
         await activeRunner.StartGame(new StartGameArgs
         {
-            GameMode = GameMode.Shared
-        });
+            GameMode = GameMode.Shared,
+            PlayerCount = 2
+        }) ;
     }
 
     /// <summary>
@@ -96,6 +97,7 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (activeRunner != null && activeRunner.IsRunning)
         {
+            isMatch = false;
             activeRunner.Shutdown(); // ルームを離脱 + Runner停止
             activeRunner = null;
         }
