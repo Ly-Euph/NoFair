@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
@@ -11,12 +12,30 @@ using UnityEngine;
     [SerializeField]
     private NetworkPrefabRef playerAvatarPrefab;
 
-    private async void Start()
+    // 接続状況
+    private bool isMatch = false;
+
+    public static GameLauncher Instance { get; private set; }
+
+    public bool GetMatchState { get { return isMatch; } }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
+    public async void Match()
     {
         var networkRunner = Instantiate(networkRunnerPrefab);
         // GameLauncherを、NetworkRunnerのコールバック対象に追加する
         networkRunner.AddCallbacks(this);
-        var result = await networkRunner.StartGame(new StartGameArgs
+
+        await networkRunner.StartGame(new StartGameArgs
         {
             GameMode = GameMode.Shared
         });
@@ -27,15 +46,35 @@ using UnityEngine;
     // プレイヤーがセッションへ参加した時に呼ばれるコールバック
     void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        // セッションへ参加したプレイヤーが自分自身かどうかを判定する
-        if (player == runner.LocalPlayer)
+
+        Debug.Log("接続");
+
+        FadeInOut fadeScr; // フェード機能
+        fadeScr = FadeInOut.CreateInstance();
+        // ローカルプレイヤー以外なら「相手が入ってきた」
+        if (player != runner.LocalPlayer)
         {
-            // アバターの初期位置を計算する（半径5の円の内部のランダムな点）
-            var rand = UnityEngine.Random.insideUnitCircle * 5f;
-            var spawnPosition = new Vector3(rand.x, 2f, rand.y);
-            // 自分自身のアバターをスポーンする
-            runner.Spawn(playerAvatarPrefab, spawnPosition, Quaternion.identity);
-        }
+            // 表示用コルーチン
+            StartCoroutine(NowMatch(fadeScr));
+            // 自分自身がマスタークライアントかどうかを判定する
+            if (networkRunnerPrefab.IsSharedModeMasterClient)
+            {
+                Debug.Log("自分自身がマスタークライアントです");
+            }
+            else
+            {
+                Debug.Log("クライアントです");
+            }
+
+            isMatch = true;
+        }  
+    }
+    private IEnumerator NowMatch(FadeInOut fadeInOut)
+    {
+        yield return new WaitForSeconds(0.8f);
+        // シーン遷移
+        fadeInOut.LoadScene("GameOnline");
+        yield break; // ← この行でコルーチン終了
     }
     void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
     void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input) { }
