@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// ゲームマッチングの起動と管理を行うクラス
@@ -19,9 +18,14 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     // 実際に生成された NetworkRunner のインスタンス
     private NetworkRunner activeRunner;
 
+    // ホストか判定
+    private bool isHost = false;
     // マッチング状態
     private bool isMatch = false;
+    
+    // 他スクリプト制御
     public bool GetMatchState => isMatch;
+    public bool GetisHost => isHost;
 
     // シングルトン化
     public static GameLauncher Instance { get; private set; }
@@ -50,7 +54,7 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
         // マッチング開始（Sharedモード）
         await activeRunner.StartGame(new StartGameArgs
         {
-            GameMode = GameMode.Shared,
+            GameMode = GameMode.AutoHostOrClient,
             PlayerCount = 2
         }) ;
     }
@@ -67,12 +71,9 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
         {
             StartCoroutine(NowMatch());
 
-            // マスタークライアント判定
-            if (runner.IsSharedModeMasterClient)
-                Debug.Log("自分がマスタークライアントです");
-            else
-                Debug.Log("クライアントです");
-
+            // True:Host
+            // False:Client
+            isHost = activeRunner.IsServer;
             isMatch = true;
         }
     }
