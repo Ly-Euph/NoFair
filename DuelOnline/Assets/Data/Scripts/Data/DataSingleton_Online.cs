@@ -1,18 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class DataSingleton_Online : MonoBehaviour
+public class DataSingleton_Online : DataBase
 {
-    // Start is called before the first frame update
-    void Start()
+    // HPÇÃÇ‚ÇËéÊÇË
+    protected override void Awake()
     {
-        
+        base.Awake();
     }
 
-    // Update is called once per frame
-    void Update()
+    override public int PlHP
     {
-        
+        get { return plhp; }
+        set { plhp = value; }
+    }
+    override public int PlMP
+    {
+        get { return plmp; }
+        set
+        {
+            plmp = value;
+            Debug.Log("MPÉ`ÉÉÅ[ÉW");
+        }
+    }
+    override public int EmHP
+    {
+        get { return emhp; }
+        set { emhp = value; }
     }
 }

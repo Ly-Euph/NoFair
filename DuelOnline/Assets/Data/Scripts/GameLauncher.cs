@@ -104,20 +104,33 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    // Clientが抜けた場合のHost
+    void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+    {
+        LeaveSession();
+        // タイトルに戻す
+        FadePoolManager.Instance.GetFade().LoadScene("Title");
+    }
+    // Hostが抜けた場合にClientはこれが呼び出される
+    void INetworkRunnerCallbacks.OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) 
+    {
+        // LeaveSession関数だと既にランナーが起動しないので強制的に切る
+        isMatch = false;
+        activeRunner.Shutdown(); // ルームを離脱 + Runner停止
+        activeRunner = null;
+        // タイトルに戻す
+        FadePoolManager.Instance.GetFade().LoadScene("Title");
+    }
+
     // -----------------------------------
     // INetworkRunnerCallbacks の未使用コールバック
     // 必須実装のため空メソッドを定義
     // -----------------------------------
     void INetworkRunnerCallbacks.OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
     void INetworkRunnerCallbacks.OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
-    void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player) {
-        LeaveSession();
-        // タイトルに戻す
-        FadePoolManager.Instance.GetFade().LoadScene("Title");
-    }
+
     void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input) { }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
-    void INetworkRunnerCallbacks.OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
     void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner) { }
     void INetworkRunnerCallbacks.OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) { }
     void INetworkRunnerCallbacks.OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
