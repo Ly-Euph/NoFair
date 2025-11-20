@@ -114,7 +114,7 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     // Hostが抜けた場合にClientはこれが呼び出される
     void INetworkRunnerCallbacks.OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) 
     {
-        // LeaveSession関数だと既にランナーが起動しないので強制的に切る
+        // LeaveSession関数だと既にランナーが起動してない状態なので強制的に切る
         isMatch = false;
         activeRunner.Shutdown(); // ルームを離脱 + Runner停止
         activeRunner = null;
