@@ -27,9 +27,9 @@ public class GameUIManager : MonoBehaviour
     // UIçXêV
     private void Update()
     {
-        var plhp = DataSingleton_Offline.Instance.PlHP;
-        var plmp = DataSingleton_Offline.Instance.PlMP;
-        var emhp = DataSingleton_Offline.Instance.EmHP;
+        var plhp = DataSingleton_Online.Instance.PlHP;
+        var plmp = DataSingleton_Online.Instance.PlMP;
+        var emhp = DataSingleton_Online.Instance.EmHP;
 
         if (plhp != prevHp || plmp != prevMp || emhp != prevEmHp)
         {

@@ -71,9 +71,9 @@ public abstract class CharacterBase : MonoBehaviour
     // アニメーションイベント制御
     #region
     // アニメーション発動用
-    protected void AnimSet()
+    protected void AnimSet(int AnimNum)
     {
-        animator.Play(animName[animNum]);
+        animator.Play(animName[AnimNum]);
         Debug.Log("アニメーション変更");
     }
     // 弱魔法

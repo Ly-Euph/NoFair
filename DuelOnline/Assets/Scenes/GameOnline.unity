@@ -1292,7 +1292,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 454043970}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &454043973
 Camera:
   m_ObjectHideFlags: 0
@@ -5554,7 +5554,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1937039411}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &1937039414
 Camera:
   m_ObjectHideFlags: 0
@@ -5880,7 +5880,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &2139088773
 AudioListener:
   m_ObjectHideFlags: 0
@@ -6566,29 +6566,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1483923649732167438
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7996606854524582984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2a9b89595d32b94e9ae1e1bb801f53c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DefColBox: {fileID: 5892986763626854999}
-  BulletPos: {fileID: 6997948380847375613}
-  LBulletPre: {fileID: 7504664387992415559, guid: e27c8a708e424da488c8f44a8cbd98b8, type: 3}
-  SBulletPre: {fileID: 7504664387992415559, guid: 4ee2926048f4dc944bfdfeba663ad35e, type: 3}
-  animator: {fileID: 5839577161478311}
-  material: {fileID: 2100000, guid: 30cc38b47f3836c49ba5199cf78c8906, type: 2}
-  r: 0
-  g: 176
-  b: 255
-  isBot: 0
-  isHostPlayer: 1
 --- !u!4 &1534416835959487376
 Transform:
   m_ObjectHideFlags: 0
@@ -7621,7 +7598,7 @@ Transform:
   - {fileID: 9112349540702255112}
   - {fileID: 3418892478365439992}
   m_Father: {fileID: 7358612149407224495}
-  m_LocalEulerAnglesHint: {x: -23.395458, y: 6.6432724, z: -94.75719}
+  m_LocalEulerAnglesHint: {x: -2.696919, y: 4.513666, z: -83.78686}
 --- !u!23 &4220297299393530303
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8153,7 +8130,8 @@ GameObject:
   - component: {fileID: 4237075453245862245}
   - component: {fileID: 4293950058502463399}
   - component: {fileID: 4262468254321368569}
-  - component: {fileID: 4293950058502463400}
+  - component: {fileID: 4293950058502463402}
+  - component: {fileID: 4293950058502463401}
   m_Layer: 0
   m_Name: Player_Red_2P
   m_TagString: Player
@@ -10241,7 +10219,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4293950058502463400
+--- !u!114 &4293950058502463401
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10250,7 +10228,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4234934059787292073}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2a9b89595d32b94e9ae1e1bb801f53c, type: 3}
+  m_Script: {fileID: 11500000, guid: c443a125062350e4eba5d50761a9576f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DefColBox: {fileID: 607900906}
@@ -10262,8 +10240,27 @@ MonoBehaviour:
   r: 255
   g: 127
   b: 115
-  isBot: 1
-  isHostPlayer: 0
+  isPlayer1: 0
+  Pl1: {fileID: 7996606854524582985}
+  Pl2: {fileID: 4293950058502463401}
+--- !u!114 &4293950058502463402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4234934059787292073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 3992798322
+  ObjectInterest: 1
+  Flags: 786433
+  NestedObjects: []
+  NetworkedBehaviours: []
+  ForceRemoteRenderTimeframe: 0
 --- !u!4 &4462581586211504438
 Transform:
   m_ObjectHideFlags: 0
@@ -11784,7 +11781,8 @@ GameObject:
   - component: {fileID: 5151018692274451803}
   - component: {fileID: 5839577161478311}
   - component: {fileID: 2187366888429194532}
-  - component: {fileID: 1483923649732167438}
+  - component: {fileID: 7996606854524582986}
+  - component: {fileID: 7996606854524582985}
   m_Layer: 6
   m_Name: Player_Blue_1P
   m_TagString: Player
@@ -11792,6 +11790,48 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &7996606854524582985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7996606854524582984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c443a125062350e4eba5d50761a9576f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DefColBox: {fileID: 5892986763626854999}
+  BulletPos: {fileID: 6997948380847375613}
+  LBulletPre: {fileID: 7504664387992415559, guid: e27c8a708e424da488c8f44a8cbd98b8, type: 3}
+  SBulletPre: {fileID: 7504664387992415559, guid: 4ee2926048f4dc944bfdfeba663ad35e, type: 3}
+  animator: {fileID: 5839577161478311}
+  material: {fileID: 2100000, guid: 30cc38b47f3836c49ba5199cf78c8906, type: 2}
+  r: 0
+  g: 176
+  b: 255
+  isPlayer1: 1
+  Pl1: {fileID: 7996606854524582985}
+  Pl2: {fileID: 4293950058502463401}
+--- !u!114 &7996606854524582986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7996606854524582984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 3267797332
+  ObjectInterest: 1
+  Flags: 786433
+  NestedObjects: []
+  NetworkedBehaviours: []
+  ForceRemoteRenderTimeframe: 0
 --- !u!4 &8013211696433257246
 Transform:
   m_ObjectHideFlags: 0

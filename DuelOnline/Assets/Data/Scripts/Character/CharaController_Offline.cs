@@ -32,7 +32,7 @@ public class CharaController_Offline : CharacterBase
         material.color = DefCol;
         // アイドル状態
         animNum = 0;
-        AnimSet();
+        AnimSet(animNum);
         // 防御判定を消しておく
         DefColBox.enabled = false;
 
@@ -53,7 +53,7 @@ public class CharaController_Offline : CharacterBase
         if (hp <= 0)
         {
             animNum = 6;
-            AnimSet();
+            AnimSet(animNum);
             // カラーチェンジ
             material.color = ActionCol;
             isDead = true;
@@ -96,7 +96,7 @@ public class CharaController_Offline : CharacterBase
         {
             DataSingleton_Offline.Instance.PlMP = mp;
         }
-        AnimSet();
+        AnimSet(animNum);
     }
     public override void LAttack()
     {
@@ -109,7 +109,7 @@ public class CharaController_Offline : CharacterBase
         {
             DataSingleton_Offline.Instance.PlMP = mp;
         }
-        AnimSet();
+        AnimSet(animNum);
     }
     public override void Charge()
     {
@@ -122,12 +122,12 @@ public class CharaController_Offline : CharacterBase
         {
             DataSingleton_Offline.Instance.PlMP = mp;
         }
-        AnimSet();
+        AnimSet(animNum);
     }
     public override void Block()
     {
         animNum = 4;
-        AnimSet();
+        AnimSet(animNum);
     }
     /// <summary>
     /// ダメージヒット処理
@@ -155,7 +155,7 @@ public class CharaController_Offline : CharacterBase
         {
             DataSingleton_Offline.Instance.EmHP = hp;
         }
-        AnimSet();
+        AnimSet(animNum);
     }
 
     // アニメーション起動時のイベント

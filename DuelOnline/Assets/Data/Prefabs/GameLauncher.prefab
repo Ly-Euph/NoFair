@@ -47,3 +47,4 @@ MonoBehaviour:
   networkRunnerPrefab: {fileID: 549498395364252866, guid: b4881b017e3c03b4f9e1ac988045c3d6, type: 3}
   playerAvatarPrefab:
     RawGuidValue: 6d58d4d1aaa10cd40932aa25d7b86d67
+  dataRelayPrefab: {fileID: 7066439291400106191, guid: ac54368ed00563846aa992f9dd62d734, type: 3}

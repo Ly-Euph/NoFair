@@ -8,7 +8,7 @@ public class GameManager_Online : MonoBehaviour
     [SerializeField] GameObject gameCanvas;
 
     // フェード開始までの時間
-    float ctTimer = 2.5f;
+    float ctTimer = 3.5f;
 
     [SerializeField] Camera camP1;
     [SerializeField] Camera camP2;
@@ -40,6 +40,10 @@ public class GameManager_Online : MonoBehaviour
         {
             case 0: // 対戦前準備
                 bool isHost = GameLauncher.Instance.GetisHost;
+                if (isHost)
+                {
+                    GameLauncher.Instance.InsNetRelay();
+                }
                 // カメラを切り替える判定
                 camP1.depth = isHost ? 1 : 0;
                 if (DataSingleton_Online.Instance.IsReady)
@@ -83,6 +87,7 @@ public class GameManager_Online : MonoBehaviour
                 if (ctTimer <= 0)
                 {
                     FadePoolManager.Instance.GetFade().LoadScene("Title");
+                    GameLauncher.Instance.LeaveSession();
                     switchNo++;
                 }
                 break;
