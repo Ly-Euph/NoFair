@@ -35,7 +35,7 @@ public class LBullet : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // プレイヤーのスクリプトを取得
-            CharaController_Offline player = other.GetComponent<CharaController_Offline>();
+            CharacterBase player = other.GetComponent<CharacterBase>();
             if (player != null)
             {
                 Debug.Log("HIT");
