@@ -17,11 +17,12 @@ public class CharaController_Online : CharacterBase
     [SerializeField] bool isPlayer1 = true;
 
     int nowAnim = 0;
-
+    int nowHP = 4;
     [SerializeField]CharaController_Online Pl1;
     [SerializeField]CharaController_Online Pl2;
     private void Awake()
     {
+        hp = 4;
         // インスペクターで設定した値を元にデフォルトカラーを決める
         DefCol = new Color(r / 255f, g / 255f, b / 255f);
         // カラーチェンジ
@@ -62,19 +63,28 @@ public class CharaController_Online : CharacterBase
             {
                 if (isPlayer1)
                 {
+                    // Player1処理
                     if (GameLauncher.Instance.GetisHost)
                     {
                         InputController();
                         DataNetRelay.Instance.RPC_SetAnim("Player1", animNum);
+                        // アニメーション処理
                         if (DataNetRelay.Instance.Player2AnimNum != nowAnim)
                         {
                             nowAnim = DataNetRelay.Instance.Player2AnimNum;
                             Pl2.AnimSet(nowAnim);
                         }
+                        // HP処理
+                        if(DataNetRelay.Instance.Player2HP!=nowHP)
+                        {
+                            nowHP = DataNetRelay.Instance.Player2HP;
+                            DataSingleton_Online.Instance.EmHP = nowHP;
+                        }
                     }
                 }
                 else
                 {
+                    // Player2処理
                     if(!GameLauncher.Instance.GetisHost)
                     {
                         InputController();
@@ -83,6 +93,11 @@ public class CharaController_Online : CharacterBase
                         {
                             nowAnim = DataNetRelay.Instance.Player1AnimNum;
                             Pl1.AnimSet(nowAnim);
+                        }
+                        if (DataNetRelay.Instance.Player1HP != nowHP)
+                        {
+                            nowHP = DataNetRelay.Instance.Player1HP;
+                            DataSingleton_Online.Instance.EmHP = nowHP;
                         }
                     }
                 }
@@ -143,11 +158,19 @@ public class CharaController_Online : CharacterBase
         // UI反映
         if (isPlayer1)
         {
-            DataSingleton_Online.Instance.PlHP = hp;
+            if (GameLauncher.Instance.GetisHost)
+            {
+                DataNetRelay.Instance.RPC_SetHP("Player1", hp);
+                DataSingleton_Online.Instance.PlHP = hp;
+            }
         }
         else
         {
-            DataSingleton_Online.Instance.EmHP = hp;
+            if (!GameLauncher.Instance.GetisHost)
+            {
+                DataNetRelay.Instance.RPC_SetHP("Player2", hp);
+                DataSingleton_Online.Instance.PlHP = hp;
+            }
         }
         AnimSet(animNum);
     }

@@ -30,4 +30,19 @@ public class DataNetRelay : NetworkBehaviour
         else
             Player2AnimNum = anim;
     }
+
+    // CharaCon->RPC_SetHP->UI”½‰f
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_SetHP(string plNum,int hp)
+    {
+        if (plNum != "Player1" && plNum != "Player2") return;
+        if (plNum == "Player1")
+        {
+            Player1HP = hp;
+        }
+        else
+        {
+            Player2HP = hp;
+        }
+    }
 }

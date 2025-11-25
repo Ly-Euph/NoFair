@@ -63,7 +63,12 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     public void InsNetRelay()
     {
         if (activeRunner.IsServer)
+        {
             activeRunner.Spawn(dataRelayPrefab);
+        }
+        // HP‰Šú‰»”O‚Ì‚½‚ß
+        DataNetRelay.Instance.Player1HP = 4;
+        DataNetRelay.Instance.Player2HP = 4;
     }
 
     /// <summary>

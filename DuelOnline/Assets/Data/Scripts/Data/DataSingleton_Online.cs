@@ -16,11 +16,7 @@ public class DataSingleton_Online : DataBase
     override public int PlMP
     {
         get { return plmp; }
-        set
-        {
-            plmp = value;
-            Debug.Log("MPƒ`ƒƒ[ƒW");
-        }
+        set { plmp = value; }
     }
     override public int EmHP
     {
