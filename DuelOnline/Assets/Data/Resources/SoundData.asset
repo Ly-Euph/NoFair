@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d98cb28a8a1c01d40bee30071c045426, type: 3}
   m_Name: SoundData
   m_EditorClassIdentifier: 
-  bgmClips: []
-  seClips: []
-  defaultBGMVolume: 1
-  defaultSEVolume: 1
+  bgmClips:
+  - {fileID: 8300000, guid: 7ab847e6fb27dc74dabc28753f1d2878, type: 3}
+  - {fileID: 8300000, guid: 4afef2e6f0192634aaef619cebd3b7d7, type: 3}
+  seClips:
+  - {fileID: 8300000, guid: dca3084cb66e8824bab682c584bec504, type: 3}
+  - {fileID: 8300000, guid: 7e58c1718e011c847949792efd486a17, type: 3}
