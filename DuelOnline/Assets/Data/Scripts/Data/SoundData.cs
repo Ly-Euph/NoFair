@@ -6,9 +6,9 @@
 [CreateAssetMenu(fileName = "SoundData", menuName = "GameData/SoundData", order = 0)]
 public class SoundData : ScriptableObject
 {
-    [Header("🎵 BGMクリップ一覧")]
+    [Header("BGMクリップ一覧")]
     public AudioClip[] bgmClips;
 
-    [Header("🔊 SEクリップ一覧")]
+    [Header("SEクリップ一覧")]
     public AudioClip[] seClips;
 }

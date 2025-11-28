@@ -46,6 +46,8 @@ public class Bullet : MonoBehaviour
         }
         else if (other.CompareTag("Defense")) // Šî–{“I‚É‚Í‘ŠE‚³‚ê‚é
         {
+            // SEÄ¶
+            AudioManager.Instance.PlaySE(8);
             DestroyBullet();
         }
         else

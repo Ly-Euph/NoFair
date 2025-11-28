@@ -74,6 +74,22 @@ public abstract class CharacterBase : MonoBehaviour
     protected void AnimSet(int AnimNum)
     {
         animator.Play(animName[AnimNum]);
+        // Animnumに合わせて音源はセットしてある
+        switch (AnimNum)
+        {
+            case 1: // 弱魔法詠唱
+                // SE再生
+                AudioManager.Instance.PlaySE(AnimNum);
+                break;
+            case 2: // 強魔法詠唱
+                // SE再生
+                AudioManager.Instance.PlaySE(AnimNum);
+                break;
+            case 3: // チャージ
+                // SE再生
+                AudioManager.Instance.PlaySE(AnimNum);
+                break;
+        }
         Debug.Log("アニメーション変更");
     }
     // 弱魔法
@@ -83,6 +99,8 @@ public abstract class CharacterBase : MonoBehaviour
         obj.transform.SetParent(BulletPos.transform);
         //自分プレイヤーオブジェクトと反対の位置を指定
         obj.GetComponent<Bullet>().SetDirectionByTargetX(-transform.position.x);
+        // SE再生
+        AudioManager.Instance.PlaySE(5);
     }
     // 強魔法
     void GenerateLMagicEvent()
@@ -91,6 +109,8 @@ public abstract class CharacterBase : MonoBehaviour
         obj.transform.SetParent(BulletPos.transform);
         //自分プレイヤーオブジェクトと反対の位置を指定
         obj.GetComponent<LBullet>().SetDirectionByTargetX(-transform.position.x);
+        // SE再生
+        AudioManager.Instance.PlaySE(5);
     }
     void DeadEvent()
     {
@@ -101,6 +121,8 @@ public abstract class CharacterBase : MonoBehaviour
     {
         // オブジェクトを有効化
         DefColBox.enabled = true;
+        // SE再生
+        AudioManager.Instance.PlaySE(4);
     }
     void DeleteBlockEvent()
     {

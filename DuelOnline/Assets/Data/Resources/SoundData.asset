@@ -14,7 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bgmClips:
   - {fileID: 8300000, guid: 7ab847e6fb27dc74dabc28753f1d2878, type: 3}
-  - {fileID: 8300000, guid: 4afef2e6f0192634aaef619cebd3b7d7, type: 3}
+  - {fileID: 8300000, guid: 4103704ef03248749b9520f1150c145c, type: 3}
   seClips:
-  - {fileID: 8300000, guid: dca3084cb66e8824bab682c584bec504, type: 3}
-  - {fileID: 8300000, guid: 7e58c1718e011c847949792efd486a17, type: 3}
+  - {fileID: 8300000, guid: ca70e348d63eb864780d970b44d900ff, type: 3}
+  - {fileID: 8300000, guid: e5dd85e0f08781b428884c9ba2abfa5f, type: 3}
+  - {fileID: 8300000, guid: 28a34f2521ac28348a72a8de1a03e368, type: 3}
+  - {fileID: 8300000, guid: 5b78dd6f86dfa484b95cebf888ce98be, type: 3}
+  - {fileID: 8300000, guid: e5f31209339bde5489e57c346d5dafd5, type: 3}
+  - {fileID: 8300000, guid: a9f43f69d066abb4ba689c0613873ec8, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 8300000, guid: b185d53d938b6474d9a426b4748eea11, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}

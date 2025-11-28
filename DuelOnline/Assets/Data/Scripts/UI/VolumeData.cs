@@ -21,9 +21,6 @@ public class VolumeData : MonoBehaviour
         // İ’è‚Ìƒ[ƒh
         LoadInt();
         TextSet("ALL");
-
-        // BGMÄ¶
-        AudioManager.Instance.PlayBGM(0);
     }
 
     // ‚»‚ê‚¼‚ê‚Ì‰¹—Êİ’è
