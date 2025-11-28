@@ -89,6 +89,10 @@ public abstract class CharacterBase : MonoBehaviour
                 // SE再生
                 AudioManager.Instance.PlaySE(AnimNum);
                 break;
+            case 5:
+                // SE再生
+                AudioManager.Instance.PlaySE(AnimNum);
+                break;
         }
         Debug.Log("アニメーション変更");
     }
@@ -100,7 +104,7 @@ public abstract class CharacterBase : MonoBehaviour
         //自分プレイヤーオブジェクトと反対の位置を指定
         obj.GetComponent<Bullet>().SetDirectionByTargetX(-transform.position.x);
         // SE再生
-        AudioManager.Instance.PlaySE(5);
+        AudioManager.Instance.PlaySE(7);
     }
     // 強魔法
     void GenerateLMagicEvent()
@@ -110,7 +114,7 @@ public abstract class CharacterBase : MonoBehaviour
         //自分プレイヤーオブジェクトと反対の位置を指定
         obj.GetComponent<LBullet>().SetDirectionByTargetX(-transform.position.x);
         // SE再生
-        AudioManager.Instance.PlaySE(5);
+        AudioManager.Instance.PlaySE(7);
     }
     void DeadEvent()
     {
