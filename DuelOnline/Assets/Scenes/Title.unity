@@ -3355,6 +3355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28caad2a732024143acb4b426b452c7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isMulti: 0
   closeObj: {fileID: 1356219164}
 --- !u!1 &828858177
 GameObject:
@@ -3780,6 +3781,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28caad2a732024143acb4b426b452c7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isMulti: 1
   closeObj: {fileID: 1265466283}
 --- !u!1 &971658800
 GameObject:
@@ -4051,6 +4053,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28caad2a732024143acb4b426b452c7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isMulti: 0
   closeObj: {fileID: 1356219164}
 --- !u!1 &1012538470
 GameObject:
@@ -6754,6 +6757,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28caad2a732024143acb4b426b452c7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isMulti: 0
   closeObj: {fileID: 1880494145}
 --- !u!1 &1654894047
 GameObject:
@@ -12047,6 +12051,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a9b89595d32b94e9ae1e1bb801f53c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eff_cursor: {fileID: 0}
+  eff_magicCircleS: {fileID: 0}
+  eff_magicCircleL: {fileID: 0}
+  plCam: {fileID: 0}
   DefColBox: {fileID: 1466686949213694590}
   BulletPos: {fileID: 2634347150094783700}
   LBulletPre: {fileID: 7504664387992415559, guid: e27c8a708e424da488c8f44a8cbd98b8, type: 3}

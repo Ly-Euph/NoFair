@@ -13,7 +13,6 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
 {
     [Header("Prefabs")]
     [SerializeField] private NetworkRunner networkRunnerPrefab; // Runnerプレハブ
-    [SerializeField] private NetworkPrefabRef playerAvatarPrefab; // プレイヤーアバタープレハブ
     [SerializeField] private DataNetRelay dataRelayPrefab;
 
     // 実際に生成された NetworkRunner のインスタンス

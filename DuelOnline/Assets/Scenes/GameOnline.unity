@@ -10232,6 +10232,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eff_cursor: {fileID: 7506926220700421332, guid: e2331488d7923584cb6c29f12b6dbe24, type: 3}
+  eff_magicCircleS: {fileID: 4978523699726826888, guid: 78894a8b66b89724598a5dc465dfa71a, type: 3}
+  eff_magicCircleL: {fileID: 7009200451607144014, guid: 16fa245d713ba1d48bb22b2fb7d954bd, type: 3}
   plCam: {fileID: 1471630271}
   DefColBox: {fileID: 607900906}
   BulletPos: {fileID: 1081698135}
@@ -11805,6 +11807,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eff_cursor: {fileID: 7506926220700421332, guid: e2331488d7923584cb6c29f12b6dbe24, type: 3}
+  eff_magicCircleS: {fileID: 4978523699726826888, guid: 78894a8b66b89724598a5dc465dfa71a, type: 3}
+  eff_magicCircleL: {fileID: 7009200451607144014, guid: 16fa245d713ba1d48bb22b2fb7d954bd, type: 3}
   plCam: {fileID: 2100599069683763401}
   DefColBox: {fileID: 5892986763626854999}
   BulletPos: {fileID: 6997948380847375613}

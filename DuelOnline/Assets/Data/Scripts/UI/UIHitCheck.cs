@@ -18,7 +18,7 @@ public class UIHitCheck : MonoBehaviour,IPointerEnterHandler, IPointerExitHandle
     public void OnPointerEnter(PointerEventData eventData)
     {
         Debug.Log($"{gameObject.name} にカーソルが乗りました");
-
+        if (gameObject.name == "RayGuardBg") { return; }
         // 表示
         obj_SelectPnl.SetActive(true);
 
