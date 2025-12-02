@@ -10231,6 +10231,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c443a125062350e4eba5d50761a9576f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eff_cursor: {fileID: 7506926220700421332, guid: e2331488d7923584cb6c29f12b6dbe24, type: 3}
+  plCam: {fileID: 1471630271}
   DefColBox: {fileID: 607900906}
   BulletPos: {fileID: 1081698135}
   LBulletPre: {fileID: 7504664387992415559, guid: e27c8a708e424da488c8f44a8cbd98b8, type: 3}
@@ -11802,6 +11804,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c443a125062350e4eba5d50761a9576f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eff_cursor: {fileID: 7506926220700421332, guid: e2331488d7923584cb6c29f12b6dbe24, type: 3}
+  plCam: {fileID: 2100599069683763401}
   DefColBox: {fileID: 5892986763626854999}
   BulletPos: {fileID: 6997948380847375613}
   LBulletPre: {fileID: 7504664387992415559, guid: e27c8a708e424da488c8f44a8cbd98b8, type: 3}

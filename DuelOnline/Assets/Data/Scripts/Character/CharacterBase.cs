@@ -2,15 +2,26 @@
 using System.Collections.Generic;
 public abstract class CharacterBase : MonoBehaviour
 {
+    // パラメータ
     // hp,mp共に最大最小は同じ
     protected const int MAX = 4;
     protected const int MIN = 0;
-
     protected int hp = 4; //体力
     protected int mp = 1; //マナ
-
     protected bool isDead = false;
 
+    protected const int ofsX = 3; // 魔法陣エフェクトのオフセット値
+    private Vector3 pos = new Vector3(-3, 5, 0); // Xは±を変更しますプレイヤー座標によって。
+
+    /*エフェクト*/
+    [SerializeField] GameObject eff_cursor;
+    [SerializeField] GameObject eff_magicCircleS; // 魔法陣弱魔法
+    [SerializeField] GameObject eff_magicCircleL; // 魔法陣強魔法
+    private GameObject effBox;
+    private GameObject effBox_sub;
+
+    // プレイヤーカメラ
+    [SerializeField] Camera plCam;
     // プレイヤーの防御あたり判定
     [SerializeField]protected BoxCollider DefColBox;
     // 魔法生成場所
@@ -39,6 +50,9 @@ public abstract class CharacterBase : MonoBehaviour
         // 描画開始
         if (Input.GetMouseButtonDown(0))
         {
+            // エフェクト生成
+            Vector3 startPos = GetMouseWorldPos();
+            effBox = Instantiate(eff_cursor, startPos, plCam.transform.rotation);
             points.Clear();
             isDrawing = true;
         }
@@ -46,6 +60,7 @@ public abstract class CharacterBase : MonoBehaviour
         // 描画中
         if (isDrawing)
         {
+            effBox.transform.position = GetMouseWorldPos();
             points.Add(Input.mousePosition);
         }
 
@@ -53,10 +68,19 @@ public abstract class CharacterBase : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             isDrawing = false;
+            Destroy(effBox);
             AnalyzeGesture(points);
         }
     }
 
+    // Camera基準でマウス座標をワールド座標に変換
+    private Vector3 GetMouseWorldPos()
+    {
+        Vector3 mousePos = Input.mousePosition;
+        // z距離をカメラからの適切な値に設定（エフェクトの見え方で調整）
+        mousePos.z = 5f;
+        return plCam.ScreenToWorldPoint(mousePos);
+    }
     // 弱魔法
     public abstract void SAttack();
     // 強魔法
@@ -73,17 +97,32 @@ public abstract class CharacterBase : MonoBehaviour
     // アニメーション発動用
     protected void AnimSet(int AnimNum)
     {
-        animator.Play(animName[AnimNum]);
+        Quaternion rot=Quaternion.identity; // 初期化
+        rot *= Quaternion.Euler(0f, 0f, 90f); // Zだけ90度回転
         // Animnumに合わせて音源はセットしてある
         switch (AnimNum)
         {
             case 1: // 弱魔法詠唱
+                // プレイヤーＸ座標がマイナスならプレイヤー１
+                pos.x = this.gameObject.transform.position.x <= 0 ? +ofsX : -ofsX; // プレイヤー判断
                 // SE再生
                 AudioManager.Instance.PlaySE(AnimNum);
+                // 魔法陣エフェクト生成
+                effBox_sub=
+                    Instantiate(eff_magicCircleS, 
+                    transform.position + new Vector3(pos.x, pos.y, pos.z),rot);
+                Destroy(effBox_sub, 1.2f); // エフェクト削除タイミング
                 break;
             case 2: // 強魔法詠唱
+                // プレイヤーＸ座標がマイナスならプレイヤー１
+                pos.x = this.gameObject.transform.position.x <= 0 ? +ofsX : -ofsX; // プレイヤー判断
                 // SE再生
                 AudioManager.Instance.PlaySE(AnimNum);
+                // 魔法陣エフェクト生成
+                effBox_sub =
+                    Instantiate(eff_magicCircleL,
+                    transform.position + new Vector3(pos.x, pos.y, pos.z), rot);
+                Destroy(effBox_sub, 1.2f); // エフェクト削除タイミング
                 break;
             case 3: // チャージ
                 // SE再生
@@ -94,6 +133,7 @@ public abstract class CharacterBase : MonoBehaviour
                 AudioManager.Instance.PlaySE(AnimNum);
                 break;
         }
+        animator.Play(animName[AnimNum]);
         Debug.Log("アニメーション変更");
     }
     // 弱魔法
