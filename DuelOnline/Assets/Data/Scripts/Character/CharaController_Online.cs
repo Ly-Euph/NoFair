@@ -1,4 +1,5 @@
 using UnityEngine;
+using Fusion;
 
 public class CharaController_Online : CharacterBase
 {
@@ -12,16 +13,33 @@ public class CharaController_Online : CharacterBase
     Color ActionCol = new Color(186f / 255f, 0f / 255f, 255f / 255f); // 行動中のカラー
     Color DefCol; // 行動可能状態
 
+    // 同期用変数
+    [Networked] public int AnimNum { get; set; }
+    private int _prevAnimNum = -1;
+
+
     // プレイヤー１ならtrue
     // プレイヤー1になるのはHost
     [SerializeField] bool isPlayer1 = true;
 
-    int nowAnim = 0;
-    int nowHP = 4;
+    public bool GetisPlnum => isPlayer1;
+
     [SerializeField]CharaController_Online Pl1;
     [SerializeField]CharaController_Online Pl2;
-    private void Awake()
+
+    void Start()
     {
+        Debug.Log($"[{name}] HasInputAuthority={Object.HasInputAuthority} PlayerRef={Runner.LocalPlayer}");
+    }
+
+    public override void Spawned()
+    {
+        // ローカルの入力クリアはここで
+        if (Object.HasInputAuthority)
+        {
+            animNum = 0;
+            AnimNum = 0;
+        }
         hp = 4;
         // インスペクターで設定した値を元にデフォルトカラーを決める
         DefCol = new Color(r / 255f, g / 255f, b / 255f);
@@ -32,111 +50,119 @@ public class CharaController_Online : CharacterBase
         AnimSet(animNum);
         // 防御判定を消しておく
         DefColBox.enabled = false;
+        // 自分のキャラじゃなければ return
+        if (!Object.HasInputAuthority){ return; }
+        SetDepth();
     }
-    public void Update()
+    public void SetDepth()
     {
-        // 操作不能
-        /* ----条件---- */
-        // 自分の死亡時、相手の死亡時
-        // ゲームマネージャーの対戦合図待ち
-        if (isDead || !DataSingleton_Online.Instance.IsReady) { return; }
-        // HPなくなったら
-        if (hp <= 0)
+        // 最優先カメラ
+        plCam.depth = 10;
+    }
+
+    private void Update()
+    {
+        if (!Object.HasInputAuthority && !Delayflg) { return; }
+        InputController();
+    }
+
+    // ------------------------------------------------------------
+    // FixedUpdateNetwork：FusionのTickごとに同期される処理
+    // 全端末が同じ Tick で同じコードを実行する
+    // → アニメ遅延・魔法遅延ゼロ
+    // ------------------------------------------------------------
+    public override void FixedUpdateNetwork()
+    {
+        // 死亡 or 準備中は何もさせない
+        if (isDead || !DataSingleton_Online.Instance.IsReady)
+            return;
+
+        // HP同期はホストが書き込む
+        if (Object.HasStateAuthority)
+            SyncHP();
+
+        // 硬直中は待つだけ（Networked 変数は触らない）
+        if (Delayflg)
         {
-            animNum = 6;
-            AnimSet(animNum);
-            // カラーチェンジ
-            material.color = ActionCol;
-            isDead = true;
+            ResetFlag();
+            return;
         }
-        // お互いのプレイヤーが生存しているのなら
-        else if (DataSingleton_Online.Instance.PlHP >= 1 && DataSingleton_Online.Instance.EmHP >= 1)
+
+        // --------------------------------
+        // 入力取得（自分の入力だけ）
+        // --------------------------------
+        if (Object.HasStateAuthority && GetInput(out NetworkInputData inputData))
         {
-            // 硬直時間
-            if (Delayflg)
+            // ホストなら Networked に書き込む
+            if (inputData.ActionID != 0)
             {
-                ResetFlag();
-                Debug.Log("硬直中");
-                return;
+                AnimNum = inputData.ActionID;
+                RPC_PlayAnim(AnimNum);
+                animNum = 0;
+                GameLauncher.Instance.SetInputNum(animNum);
             }
+        }
+
+        Debug.Log("ネットワーク変数" + AnimNum);
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_PlayAnim(int animId)
+    {
+        AnimSet(animId);
+    }
+    // ------------------------------------------------------------
+    // HP同期処理（DataNetRelay使用）
+    // Host = StateAuthority が書く
+    // Client はそれを読む
+    // ------------------------------------------------------------
+    private void SyncHP()
+    {
+        var relay = DataNetRelay.Instance;
+
+        if (GameLauncher.Instance.GetisHost)
+        {
+            if (isPlayer1)
+                relay.Player1HP = hp;
             else
-            {
-                if (isPlayer1)
-                {
-                    // Player1処理
-                    if (GameLauncher.Instance.GetisHost)
-                    {
-                        InputController();
-                        DataNetRelay.Instance.RPC_SetAnim("Player1", animNum);
-                        // アニメーション処理
-                        if (DataNetRelay.Instance.Player2AnimNum != nowAnim)
-                        {
-                            nowAnim = DataNetRelay.Instance.Player2AnimNum;
-                            Pl2.AnimSet(nowAnim);
-                        }
-                        // HP処理
-                        if(DataNetRelay.Instance.Player2HP!=nowHP)
-                        {
-                            nowHP = DataNetRelay.Instance.Player2HP;
-                            DataSingleton_Online.Instance.EmHP = nowHP;
-                        }
-                    }
-                }
-                else
-                {
-                    // Player2処理
-                    if(!GameLauncher.Instance.GetisHost)
-                    {
-                        InputController();
-                        DataNetRelay.Instance.RPC_SetAnim("Player2", animNum);
-                        if (DataNetRelay.Instance.Player1AnimNum != nowAnim)
-                        {
-                            nowAnim = DataNetRelay.Instance.Player1AnimNum;
-                            Pl1.AnimSet(nowAnim);
-                        }
-                        if (DataNetRelay.Instance.Player1HP != nowHP)
-                        {
-                            nowHP = DataNetRelay.Instance.Player1HP;
-                            DataSingleton_Online.Instance.EmHP = nowHP;
-                        }
-                    }
-                }
-                    Debug.Log(mp);
-            }
+                relay.Player2HP = hp;
+        }
+        else
+        {
+            if (isPlayer1)
+                hp = relay.Player1HP;
+            else
+                hp = relay.Player2HP;
         }
     }
 
     public override void SAttack()
     {
-        animNum = 1;
         // MPチェック
         if (mp <= 0) { return; }
-        else { mp--; }
+        else { mp-=1; }
+        animNum = 1;
         DataSingleton_Online.Instance.PlMP = mp;
-        AnimSet(animNum);
     }
     public override void LAttack()
     {
-        animNum = 2;
         // MPチェック
         if (mp <= 2) { return; }
         else { mp = mp - 3; }
+        animNum = 2;
         DataSingleton_Online.Instance.PlMP = mp;
-        AnimSet(animNum);
     }
     public override void Charge()
     {
-        animNum = 3;
         // MPチェック
         if (mp >= MAX) { return; }
-        else { mp++; }
+        else { mp+=1; }
+        animNum = 3;
         DataSingleton_Online.Instance.PlMP = mp;
-        AnimSet(animNum);
     }
     public override void Block()
     {
         animNum = 4;
-        AnimSet(animNum);
     }
     /// <summary>
     /// ダメージヒット処理
@@ -146,7 +172,6 @@ public class CharaController_Online : CharacterBase
     {
         // 死んでいた場合は動かさない
         if (isDead) { return; }
-        animNum = 5;
         if (isSmall)
         {
             hp--;
@@ -172,7 +197,8 @@ public class CharaController_Online : CharacterBase
                 DataSingleton_Online.Instance.PlHP = hp;
             }
         }
-        AnimSet(animNum);
+        animNum = 5;
+        GameLauncher.Instance.SetInputNum(animNum);
     }
 
     // アニメーション起動時のイベント
@@ -188,10 +214,12 @@ public class CharaController_Online : CharacterBase
     // 硬直時間の計算
     void ResetFlag()
     {
-        seconds -= Time.deltaTime;
+        seconds -= Runner.DeltaTime;
         if (seconds < 0)
         {
             animNum = 0;
+            AnimNum = 0;
+            GameLauncher.Instance.SetInputNum(animNum);
             // カラーチェンジ
             material.color = DefCol;
             Delayflg = false;

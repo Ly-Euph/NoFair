@@ -1,11 +1,18 @@
 using UnityEngine;
+using Fusion;
 
-public class GameManager_Online : MonoBehaviour
+public class GameManager_Online : NetworkBehaviour
 {
     // ここに最初の画面が出る
     // オブジェクトフォルダ
     [SerializeField] GameObject startObj;
     [SerializeField] GameObject gameCanvas;
+
+    [SerializeField] GameObject pl1;
+    [SerializeField] GameObject pl2;
+
+    [SerializeField] Transform posPl1;
+    [SerializeField] Transform posPl2;
 
     // フェード開始までの時間
     float ctTimer = 3.5f;
@@ -24,6 +31,7 @@ public class GameManager_Online : MonoBehaviour
 
     // 初期番号0
     private int switchNo = 0;
+   
     void Start()
     {
         // カメラ優先度を二つとも1に変更
@@ -40,14 +48,15 @@ public class GameManager_Online : MonoBehaviour
         {
             case 0: // 対戦前準備
                 bool isHost = GameLauncher.Instance.GetisHost;
-                if (isHost)
-                {
-                    GameLauncher.Instance.InsNetRelay();
-                }
                 // カメラを切り替える判定
-                camP1.depth = isHost ? 1 : 0;
+                // 各自プレイヤーで
                 if (DataSingleton_Online.Instance.IsReady)
                 {
+                    if (isHost)
+                    {
+                        Debug.Log("今回のホストです");
+                        GameLauncher.Instance.InsNetRelay();
+                    }
                     // 対戦画面用のオブジェクトを削除
                     startObj.SetActive(false);
                     // ゲーム中のUI表示
@@ -98,8 +107,8 @@ public class GameManager_Online : MonoBehaviour
     // 勝利判定関数
     private BattleResult CheckBattleResult()
     {
-        float p1HP = DataSingleton_Offline.Instance.PlHP;
-        float p2HP = DataSingleton_Offline.Instance.EmHP;
+        float p1HP = DataNetRelay.Instance.Player1HP;
+        float p2HP = DataNetRelay.Instance.Player2HP;
 
         bool isDeadP1 = p1HP <= 0;
         bool isDeadP2 = p2HP <= 0;

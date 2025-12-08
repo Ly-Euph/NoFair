@@ -49,6 +49,8 @@ public class UIManager : MonoBehaviour
             currentAction.Invoke();
             currentObj.SetActive(false);
             AudioManager.Instance.PlaySE(0);
+
+            ClearCurrentAction();
         }
     }
 

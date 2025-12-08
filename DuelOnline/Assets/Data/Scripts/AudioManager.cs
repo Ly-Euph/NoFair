@@ -77,14 +77,14 @@ public class AudioManager : MonoBehaviour
         bgmSource = gameObject.AddComponent<AudioSource>();
         bgmSource.playOnAwake = false;
         bgmSource.loop = true;
-        bgmSource.volume = (float)PlayerPrefs.GetInt("bgmVolume") * 0.1f;
+        bgmSource.volume = (float)PlayerPrefs.GetInt("bgmVolume",10) * 0.1f;
 
         // SE AudioSource プール
         for (int i = 0; i < sePoolSize; i++)
         {
             AudioSource seSource = gameObject.AddComponent<AudioSource>();
             seSource.playOnAwake = false;
-            seSource.volume = (float)PlayerPrefs.GetInt("seVolume") * 0.1f;
+            seSource.volume = (float)PlayerPrefs.GetInt("seVolume",10) * 0.1f;
             sePool.Add(seSource);
         }
     }

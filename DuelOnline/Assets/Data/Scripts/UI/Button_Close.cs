@@ -11,7 +11,10 @@ public class Button_Close : MonoBehaviour
             // ƒZƒbƒVƒ‡ƒ“‚©‚ç”²‚¯‚Ä‚¨‚­
             GameLauncher.Instance.LeaveSession();
         }
-        closeObj.SetActive(false);
+        else
+        {
+            closeObj.SetActive(false);
+        }
         Debug.Log("AAA");
     }
 }

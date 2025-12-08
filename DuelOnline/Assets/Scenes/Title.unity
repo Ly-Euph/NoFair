@@ -1415,6 +1415,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameLauncher
       objectReference: {fileID: 0}
+    - target: {fileID: 1323113151173029066, guid: e2b90807dea38f54f8d9d6a13bc49638, type: 3}
+      propertyPath: pl1Avatar
+      value: 
+      objectReference: {fileID: 4443176440200696844, guid: 285b9485e39ca77499b56b8aa40758d3, type: 3}
+    - target: {fileID: 1323113151173029066, guid: e2b90807dea38f54f8d9d6a13bc49638, type: 3}
+      propertyPath: pl2Avatar
+      value: 
+      objectReference: {fileID: 5897930045310539636, guid: fe30b37aa5792bd489e5a61b4019d53b, type: 3}
     - target: {fileID: 8213405178433117981, guid: e2b90807dea38f54f8d9d6a13bc49638, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.8999996

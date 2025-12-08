@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-public abstract class CharacterBase : MonoBehaviour
+using Fusion;
+public abstract class CharacterBase : NetworkBehaviour
 {
     // パラメータ
     // hp,mp共に最大最小は同じ
@@ -21,7 +22,7 @@ public abstract class CharacterBase : MonoBehaviour
     private GameObject effBox_sub;
 
     // プレイヤーカメラ
-    [SerializeField] Camera plCam;
+    [SerializeField]protected Camera plCam;
     // プレイヤーの防御あたり判定
     [SerializeField]protected BoxCollider DefColBox;
     // 魔法生成場所
@@ -48,7 +49,7 @@ public abstract class CharacterBase : MonoBehaviour
     protected void InputController()
     {
         // 描画開始
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0)&&!isDrawing)
         {
             // エフェクト生成
             Vector3 startPos = GetMouseWorldPos();
@@ -70,6 +71,8 @@ public abstract class CharacterBase : MonoBehaviour
             isDrawing = false;
             Destroy(effBox);
             AnalyzeGesture(points);
+            points.Clear();
+            GameLauncher.Instance.SetInputNum(animNum);
         }
     }
 
@@ -95,18 +98,18 @@ public abstract class CharacterBase : MonoBehaviour
     // アニメーションイベント制御
     #region
     // アニメーション発動用
-    protected void AnimSet(int AnimNum)
+    protected void AnimSet(int animSetNum)
     {
         Quaternion rot=Quaternion.identity; // 初期化
         rot *= Quaternion.Euler(0f, 0f, 90f); // Zだけ90度回転
         // Animnumに合わせて音源はセットしてある
-        switch (AnimNum)
+        switch (animSetNum)
         {
             case 1: // 弱魔法詠唱
                 // プレイヤーＸ座標がマイナスならプレイヤー１
                 pos.x = this.gameObject.transform.position.x <= 0 ? +ofsX : -ofsX; // プレイヤー判断
                 // SE再生
-                AudioManager.Instance.PlaySE(AnimNum);
+                AudioManager.Instance.PlaySE(animSetNum);
                 // 魔法陣エフェクト生成
                 effBox_sub=
                     Instantiate(eff_magicCircleS, 
@@ -117,7 +120,7 @@ public abstract class CharacterBase : MonoBehaviour
                 // プレイヤーＸ座標がマイナスならプレイヤー１
                 pos.x = this.gameObject.transform.position.x <= 0 ? +ofsX : -ofsX; // プレイヤー判断
                 // SE再生
-                AudioManager.Instance.PlaySE(AnimNum);
+                AudioManager.Instance.PlaySE(animSetNum);
                 // 魔法陣エフェクト生成
                 effBox_sub =
                     Instantiate(eff_magicCircleL,
@@ -126,14 +129,14 @@ public abstract class CharacterBase : MonoBehaviour
                 break;
             case 3: // チャージ
                 // SE再生
-                AudioManager.Instance.PlaySE(AnimNum);
+                AudioManager.Instance.PlaySE(animSetNum);
                 break;
             case 5:
                 // SE再生
-                AudioManager.Instance.PlaySE(AnimNum);
+                AudioManager.Instance.PlaySE(animSetNum);
                 break;
         }
-        animator.Play(animName[AnimNum]);
+        animator.Play(animName[animSetNum]);
         Debug.Log("アニメーション変更");
     }
     // 弱魔法

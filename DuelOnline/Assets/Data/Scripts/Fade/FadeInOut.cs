@@ -48,7 +48,19 @@ public class FadeInOut : MonoBehaviour
     {
         fadeImage.enabled = true;
         yield return Fade(0, 1); // フェードアウト
-        SceneManager.LoadScene(sceneName);
+        if (GameLauncher.Instance != null && GameLauncher.Instance.GetMatchState == true)
+        {
+            if (GameLauncher.Instance.GetisHost)
+            {
+                GameLauncher.Instance.ChangeSceneOnline(sceneName);
+                Debug.Log("オンラインでのシーンロード");
+            }
+        }
+        else
+        {
+            SceneManager.LoadScene(sceneName);
+            Debug.Log("オフラインでのシーンロード");
+        }
         yield return new WaitForSeconds(0.1f);
         yield return Fade(1, 0); // フェードイン
 
