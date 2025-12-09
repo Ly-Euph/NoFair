@@ -62,7 +62,7 @@ public class CharaController_Online : CharacterBase
 
     private void Update()
     {
-        if (!Object.HasInputAuthority && !Delayflg) { return; }
+        if (!Object.HasInputAuthority || Delayflg) { return; }
         InputController();
     }
 
@@ -78,8 +78,8 @@ public class CharaController_Online : CharacterBase
             return;
 
         // HP同期はホストが書き込む
-        if (Object.HasStateAuthority)
-            SyncHP();
+        // クライアント側は読み込む
+        SyncHP();
 
         // 硬直中は待つだけ（Networked 変数は触らない）
         if (Delayflg)
@@ -96,21 +96,20 @@ public class CharaController_Online : CharacterBase
             // ホストなら Networked に書き込む
             if (inputData.ActionID != 0)
             {
+                // 入力送信
                 AnimNum = inputData.ActionID;
                 RPC_PlayAnim(AnimNum);
+
+                // リセット処理
                 animNum = 0;
                 GameLauncher.Instance.SetInputNum(animNum);
+
+                Debug.Log("入力情報送信済み");
             }
         }
-
-        Debug.Log("ネットワーク変数" + AnimNum);
     }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_PlayAnim(int animId)
-    {
-        AnimSet(animId);
-    }
+  
     // ------------------------------------------------------------
     // HP同期処理（DataNetRelay使用）
     // Host = StateAuthority が書く
@@ -119,20 +118,34 @@ public class CharaController_Online : CharacterBase
     private void SyncHP()
     {
         var relay = DataNetRelay.Instance;
+        var data = DataSingleton_Online.Instance;
 
-        if (GameLauncher.Instance.GetisHost)
+        if (Object.HasStateAuthority)
         {
+            // 死亡チェックは一度だけ
+            if (!isDead && hp <= 0)
+            {
+                isDead = true;
+
+                // 死亡アニメ通知（1回だけ）
+                RPC_PlayAnim(6);
+            }
             if (isPlayer1)
+            {
                 relay.Player1HP = hp;
+                data.PlHP = hp;
+            }
             else
+            {
                 relay.Player2HP = hp;
+                data.EmHP = hp;
+            }
         }
-        else
+        else // クライアント側
         {
-            if (isPlayer1)
-                hp = relay.Player1HP;
-            else
-                hp = relay.Player2HP;
+            hp = relay.Player2HP;
+            data.EmHP = relay.Player1HP;
+            data.PlHP = hp;
         }
     }
 
@@ -171,7 +184,9 @@ public class CharaController_Online : CharacterBase
     public override void Damage(bool isSmall)
     {
         // 死んでいた場合は動かさない
-        if (isDead) { return; }
+        // クライアント側も動かさない
+        if (isDead||!Object.HasStateAuthority) { return; }
+        // 弾の判定
         if (isSmall)
         {
             hp--;
@@ -180,25 +195,16 @@ public class CharaController_Online : CharacterBase
         {
             hp -= 1;
         }
-        // UI反映
+        // HP送信
         if (isPlayer1)
         {
-            if (GameLauncher.Instance.GetisHost)
-            {
-                DataNetRelay.Instance.RPC_SetHP("Player1", hp);
-                DataSingleton_Online.Instance.PlHP = hp;
-            }
+            DataNetRelay.Instance.RPC_SetHP("Player1", hp);
         }
         else
         {
-            if (!GameLauncher.Instance.GetisHost)
-            {
-                DataNetRelay.Instance.RPC_SetHP("Player2", hp);
-                DataSingleton_Online.Instance.PlHP = hp;
-            }
+            DataNetRelay.Instance.RPC_SetHP("Player2", hp);
         }
-        animNum = 5;
-        GameLauncher.Instance.SetInputNum(animNum);
+        RPC_PlayAnim(5);
     }
 
     // アニメーション起動時のイベント
@@ -220,10 +226,22 @@ public class CharaController_Online : CharacterBase
             animNum = 0;
             AnimNum = 0;
             GameLauncher.Instance.SetInputNum(animNum);
-            // カラーチェンジ
-            material.color = DefCol;
-            Delayflg = false;
+            RPC_ResetFlag();
         }
     }
 
+    // RPC関連通信処理
+    // アニメーションセット
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_PlayAnim(int animId)
+    {
+        AnimSet(animId);
+    }
+    [Rpc(RpcSources.StateAuthority,RpcTargets.All)]
+    public void RPC_ResetFlag()
+    {
+        // カラーチェンジ
+        material.color = DefCol;
+        Delayflg = false;
+    }
 }
