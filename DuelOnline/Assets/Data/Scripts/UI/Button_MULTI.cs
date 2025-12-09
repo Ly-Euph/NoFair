@@ -11,11 +11,6 @@ public class Button_MULTI : MonoBehaviour
     string text = "マッチング中";
     char dot = '.';
     // オンラインのマッチング
-
-    public void Awake()
-    {
-       
-    }
     public void OnClick()
     {
         var Ins = GameLauncher.Instance;
@@ -28,7 +23,7 @@ public class Button_MULTI : MonoBehaviour
         Ins.Match();
 
         // 表示用コルーチン
-        StartCoroutine(NowMatch(tmPro, dot));
+        StartCoroutine(NowMatchText(tmPro, dot));
 
     }
 
@@ -43,7 +38,7 @@ public class Button_MULTI : MonoBehaviour
         }
     }
 
-    private IEnumerator NowMatch(TextMeshProUGUI tmp, char dot)
+    private IEnumerator NowMatchText(TextMeshProUGUI tmp, char dot)
     {
         while (true)
         {
