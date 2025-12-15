@@ -62,7 +62,11 @@ public class CharaController_Online : CharacterBase
 
     private void Update()
     {
+        // 自分自身であること硬直フレームでないこと
         if (!Object.HasInputAuthority || Delayflg) { return; }
+        // 準備フェーズ終了
+        if (!DataSingleton_Online.Instance.IsReady) { return; }
+        // 入力処理
         InputController();
     }
 
