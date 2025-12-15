@@ -72,6 +72,7 @@ public abstract class CharacterBase : NetworkBehaviour
             Destroy(effBox);
             AnalyzeGesture(points);
             points.Clear();
+            if (GameLauncher.Instance == null) { return; }
             GameLauncher.Instance.SetInputNum(animNum);
         }
     }
@@ -183,16 +184,17 @@ public abstract class CharacterBase : NetworkBehaviour
     {
         if (pts.Count < 5) return;
 
+        // --- 画面サイズ基準 ---
+        float minScreen = Mathf.Min(Screen.width, Screen.height);
+
         Vector2 start = pts[0];
         Vector2 end = pts[^1];
-        float xDiff = end.x - start.x;
-        float yDiff = end.y - start.y;
 
-        float totalX = Mathf.Abs(pts[^1].x - pts[0].x);
-        float totalY = Mathf.Abs(pts[^1].y - pts[0].y);
+        float totalX = Mathf.Abs(end.x - start.x) / minScreen;
+        float totalY = Mathf.Abs(end.y - start.y) / minScreen;
 
         // --- 1️⃣ 横線（左右スワイプ） ---
-        if (totalX > 150 && totalY < 80)
+        if (totalX > 0.15f && totalY < 0.08f)
         {
             Debug.Log("Command A: 横線ジェスチャー");
             OnHorizontal();
@@ -200,7 +202,7 @@ public abstract class CharacterBase : NetworkBehaviour
         }
 
         // --- 2️⃣ 縦線（上下スワイプ） ---
-        if (totalY > 150 && totalX < 80)
+        if (totalY > 0.15f && totalX < 0.08f)
         {
             Debug.Log("Command B: 縦線ジェスチャー");
             OnVertical();
@@ -208,7 +210,7 @@ public abstract class CharacterBase : NetworkBehaviour
         }
 
         // --- 3️⃣ V字（折れ線） ---
-        if (IsVShape(pts))
+        if (IsVShape(pts, minScreen))
         {
             Debug.Log("Command C: V字ジェスチャー");
             OnV();
@@ -216,7 +218,7 @@ public abstract class CharacterBase : NetworkBehaviour
         }
 
         // --- 4️⃣ 円（ループ） ---
-        if (IsCircle(pts))
+        if (IsCircle(pts, minScreen))
         {
             Debug.Log("Command D: 円ジェスチャー");
             OnCircle();
@@ -228,7 +230,7 @@ public abstract class CharacterBase : NetworkBehaviour
 
     // ---- 判定関数 ----
 
-    private bool IsVShape(List<Vector2> pts)
+    private bool IsVShape(List<Vector2> pts, float minScreen)
     {
         if (pts.Count < 10) return false;
 
@@ -237,21 +239,25 @@ public abstract class CharacterBase : NetworkBehaviour
         Vector2 middle = pts[mid];
         Vector2 end = pts[^1];
 
-        bool downThenUp = middle.y < start.y - 40 && end.y > middle.y + 40;
-        float xMove = Mathf.Abs(end.x - start.x);
+        bool downUp =
+            (start.y - middle.y) / minScreen > 0.08f &&
+            (end.y - middle.y) / minScreen > 0.08f;
 
-        return downThenUp && xMove < 150f; // 横ずれが少ないほど良い
+        float xMove = Mathf.Abs(end.x - start.x) / minScreen;
+
+        return downUp && xMove < 0.15f;
     }
-    private bool IsCircle(List<Vector2> pts)
+   private bool IsCircle(List<Vector2> pts, float minScreen)
     {
-        // 始点と終点が近く、X・Yともにある程度動いている
         Vector2 start = pts[0];
         Vector2 end = pts[^1];
-        float distance = Vector2.Distance(start, end);
-        float width = Mathf.Abs(GetMaxX(pts) - GetMinX(pts));
-        float height = Mathf.Abs(GetMaxY(pts) - GetMinY(pts));
 
-        return distance < 50 && width > 100 && height > 100;
+        float closeDist = Vector2.Distance(start, end) / minScreen;
+
+        float width = (GetMaxX(pts) - GetMinX(pts)) / minScreen;
+        float height = (GetMaxY(pts) - GetMinY(pts)) / minScreen;
+
+        return closeDist < 0.05f && width > 0.12f && height > 0.12f;
     }
 
     private float GetMaxX(List<Vector2> pts) => Mathf.Max(pts.ConvertAll(p => p.x).ToArray());

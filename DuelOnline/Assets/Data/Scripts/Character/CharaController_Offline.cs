@@ -12,6 +12,9 @@ public class CharaController_Offline : CharacterBase
     Color ActionCol = new Color(186f / 255f, 0f / 255f, 255f / 255f); // 行動中のカラー
     Color DefCol; // 行動可能状態
 
+    // 画面効果エフェクト
+    private EffectManager effectManager;
+
     // NPCかどうか基本的にはfalseかな
     [SerializeField]bool isBot = false;
     [SerializeField] bool isHostPlayer = false;
@@ -35,7 +38,7 @@ public class CharaController_Offline : CharacterBase
         AnimSet(animNum);
         // 防御判定を消しておく
         DefColBox.enabled = false;
-
+        effectManager = GetComponentInChildren<EffectManager>();
         // Botのみの設定
         if (isBot)
         {
@@ -84,6 +87,12 @@ public class CharaController_Offline : CharacterBase
                 Debug.Log(mp);
             }
         }
+
+        // 再チェック
+        // 防御判定
+        if (animNum != 4&&DefColBox.enabled==true) {
+            DefColBox.enabled = false;
+        }
     }
     public override void SAttack()
     {
@@ -97,6 +106,7 @@ public class CharaController_Offline : CharacterBase
             DataSingleton_Offline.Instance.PlMP = mp;
         }
         AnimSet(animNum);
+        effectManager.PlayWeakMagic();
     }
     public override void LAttack()
     {
@@ -110,6 +120,7 @@ public class CharaController_Offline : CharacterBase
             DataSingleton_Offline.Instance.PlMP = mp;
         }
         AnimSet(animNum);
+        effectManager.PlayStrongMagic();
     }
     public override void Charge()
     {
@@ -123,11 +134,13 @@ public class CharaController_Offline : CharacterBase
             DataSingleton_Offline.Instance.PlMP = mp;
         }
         AnimSet(animNum);
+        effectManager.StartCharge();
     }
     public override void Block()
     {
         animNum = 4;
         AnimSet(animNum);
+        effectManager.PlayGuard();
     }
     /// <summary>
     /// ダメージヒット処理
@@ -149,6 +162,7 @@ public class CharaController_Offline : CharacterBase
         // UI反映
         if (isHostPlayer)
         {
+            if (hp <= 1) { effectManager.SetLowHP(true); }
             DataSingleton_Offline.Instance.PlHP = hp;
         }
         else
@@ -156,6 +170,7 @@ public class CharaController_Offline : CharacterBase
             DataSingleton_Offline.Instance.EmHP = hp;
         }
         AnimSet(animNum);
+        effectManager.PlayDamage();
     }
 
     // アニメーション起動時のイベント
