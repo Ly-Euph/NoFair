@@ -33,11 +33,10 @@ public class UIManager : MonoBehaviour
 
                 // ② カメラからどれくらい前に出すか（距離）
                 //   ボタンが UI なので z を固定しないとカメラ上に表示されない
-                mousePos.z = 2f; // カメラから2m前に出す例（必要に応じて調整）
+                mousePos.z = 1.5f; // カメラから2m前に出す例（必要に応じて調整）
 
                 // ③ ワールド座標に変換
                 Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
-
                 // ④ エフェクトをワールド座標に移動して再生
                 GameObject effObj = Instantiate(Eff, worldPos, Quaternion.identity);
 
@@ -47,9 +46,16 @@ public class UIManager : MonoBehaviour
 
             Debug.Log($"[UIManager] {currentButton} のActionを実行します");
             currentAction.Invoke();
-            currentObj.SetActive(false);
             AudioManager.Instance.PlaySE(0);
 
+            // 一部例外ボタン
+            if(currentButton== "ButtonFrame_LeftArrow"||
+                currentButton== "ButtonFrame_RightArrow")
+            {
+                return;
+            }
+
+            currentObj.SetActive(false);
             ClearCurrentAction();
         }
     }
