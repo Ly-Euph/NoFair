@@ -11,6 +11,7 @@ public class EffectManager : MonoBehaviour
     public void StartCharge()
     {
         chargeEffect.Play();
+        flashEffect.Flash(Color.yellow * 0.8f, 0.4f);
     }
 
     public void EndCharge()
@@ -26,7 +27,7 @@ public class EffectManager : MonoBehaviour
 
     public void PlayCharge()
     {
-        flashEffect.Flash(Color.white * 0.8f, 1f);
+        flashEffect.Flash(Color.yellow * 0.8f, 1f);
     }
 
     public void PlayGuard()

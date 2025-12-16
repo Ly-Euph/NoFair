@@ -8,7 +8,7 @@ public class VignetteEffect : MonoBehaviour
     public void SetActive(bool enable)
     {
         image.color = enable
-            ? new Color(1, 0, 0, 0.15f)
+            ? new Color(1, 0, 0, 0.3f)
             : new Color(0, 0, 0, 0);
     }
 }
