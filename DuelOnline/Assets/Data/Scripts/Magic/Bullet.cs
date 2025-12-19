@@ -3,7 +3,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private float speed = 10f;  // à⁄ìÆë¨ìx
-
+    [SerializeField] private GameObject eff_BlockHit; // ñhå‰Ç≥ÇÍÇΩ
     private Vector3 direction;
 
     private void Update()
@@ -48,6 +48,7 @@ public class Bullet : MonoBehaviour
         {
             // SEçƒê∂
             AudioManager.Instance.PlaySE(8);
+            GameObject obj = Instantiate(eff_BlockHit, transform.position, Quaternion.identity);
             DestroyBullet();
         }
         else
@@ -59,6 +60,5 @@ public class Bullet : MonoBehaviour
     private void DestroyBullet()
     {
         Destroy(gameObject);
-
     }
 }

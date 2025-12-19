@@ -27,6 +27,8 @@ public class CharaController_Offline : CharacterBase
     // NPC専用で行動時間を制御する
     private bool isAct = true;
     #endregion
+    // デバッグプレビュー
+    [SerializeField]private bool isPreview = false; 
     private void Awake()
     {
         // インスペクターで設定した値を元にデフォルトカラーを決める
@@ -47,6 +49,25 @@ public class CharaController_Offline : CharacterBase
     }
     public void Update()
     {
+        if (isPreview)
+        {
+            // 硬直時間
+            if (Delayflg)
+            {
+                ResetFlag();
+                Debug.Log("硬直中");
+                return;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha1))      { animNum = 1; Delayflg = true; }
+            else if (Input.GetKeyDown(KeyCode.Alpha2)) { animNum = 2; Delayflg = true; }
+            else if (Input.GetKeyDown(KeyCode.Alpha3)) { animNum = 3; Delayflg = true; }
+            else if (Input.GetKeyDown(KeyCode.Alpha4)) { animNum = 4; Delayflg = true; }
+            else if (Input.GetKeyDown(KeyCode.Alpha5)) { animNum = 5; Delayflg = true; }
+
+            AnimSet(animNum);
+            animNum = 0;
+            return;
+        }
         // 操作不能
         /* ----条件---- */
         // 自分の死亡時、相手の死亡時

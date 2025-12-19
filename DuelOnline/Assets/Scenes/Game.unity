@@ -4494,7 +4494,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9163071123771099872, guid: dfaae21e6c162f140bbd3eea741dac92, type: 3}
       propertyPath: speed
-      value: 1800
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6066,12 +6066,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
-    are already bound by a Humanoid avatar. These transforms can only be changed
-    by Humanoid clips.\n\tTransform 'Hair01_r'\n\tTransform 'Hair01_l'\n\tTransform
-    'Hair01_r'\n\tTransform 'Hair01_l'\n\tTransform 'Hair01_r'\n\tTransform 'Hair01_l'\n\tFrom
-    animation clip 'Chara_DAMAGE'\n\tFrom animation clip 'Chara_DIE'\n\tFrom animation
-    clip 'Chara_DIE2'"
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -6711,6 +6706,9 @@ MonoBehaviour:
   eff_cursor: {fileID: 7506926220700421332, guid: e2331488d7923584cb6c29f12b6dbe24, type: 3}
   eff_magicCircleS: {fileID: 4978523699726826888, guid: 78894a8b66b89724598a5dc465dfa71a, type: 3}
   eff_magicCircleL: {fileID: 7009200451607144014, guid: 16fa245d713ba1d48bb22b2fb7d954bd, type: 3}
+  eff_charge: {fileID: 2365310736940933663, guid: c22145b0e799a4240a05aea837551bc7, type: 3}
+  eff_block: {fileID: 2251522109330783591, guid: c3dc0b787b5b42547a693a1bbf150ebb, type: 3}
+  eff_damage: {fileID: 5883226620086393739, guid: b7019716c415afd4c9d268aea077360b, type: 3}
   plCam: {fileID: 2100599069683763401}
   DefColBox: {fileID: 5892986763626854999}
   BulletPos: {fileID: 6997948380847375613}
@@ -6723,6 +6721,7 @@ MonoBehaviour:
   b: 255
   isBot: 0
   isHostPlayer: 1
+  isPreview: 0
 --- !u!4 &1534416835959487376
 Transform:
   m_ObjectHideFlags: 0
@@ -7047,7 +7046,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.5
+  m_Radius: 1
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0.98, z: 0}
@@ -10403,7 +10402,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.5
+  m_Radius: 1
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0.98, z: 0}
@@ -10423,12 +10422,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
-    are already bound by a Humanoid avatar. These transforms can only be changed
-    by Humanoid clips.\n\tTransform 'Hair01_r'\n\tTransform 'Hair01_l'\n\tTransform
-    'Hair01_r'\n\tTransform 'Hair01_l'\n\tTransform 'Hair01_r'\n\tTransform 'Hair01_l'\n\tFrom
-    animation clip 'Chara_DAMAGE'\n\tFrom animation clip 'Chara_DIE'\n\tFrom animation
-    clip 'Chara_DIE2'"
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -10448,6 +10442,9 @@ MonoBehaviour:
   eff_cursor: {fileID: 7506926220700421332, guid: e2331488d7923584cb6c29f12b6dbe24, type: 3}
   eff_magicCircleS: {fileID: 4978523699726826888, guid: 78894a8b66b89724598a5dc465dfa71a, type: 3}
   eff_magicCircleL: {fileID: 7009200451607144014, guid: 16fa245d713ba1d48bb22b2fb7d954bd, type: 3}
+  eff_charge: {fileID: 2365310736940933663, guid: c22145b0e799a4240a05aea837551bc7, type: 3}
+  eff_block: {fileID: 2251522109330783591, guid: c3dc0b787b5b42547a693a1bbf150ebb, type: 3}
+  eff_damage: {fileID: 5883226620086393739, guid: b7019716c415afd4c9d268aea077360b, type: 3}
   plCam: {fileID: 1471630271}
   DefColBox: {fileID: 607900906}
   BulletPos: {fileID: 1081698135}
@@ -10460,6 +10457,7 @@ MonoBehaviour:
   b: 115
   isBot: 1
   isHostPlayer: 0
+  isPreview: 0
 --- !u!4 &4462581586211504438
 Transform:
   m_ObjectHideFlags: 0
@@ -12497,7 +12495,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!33 &9107439204780780460
 MeshFilter:
   m_ObjectHideFlags: 0

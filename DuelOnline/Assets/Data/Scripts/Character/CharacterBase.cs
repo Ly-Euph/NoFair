@@ -11,13 +11,19 @@ public abstract class CharacterBase : NetworkBehaviour
     protected int mp = 1; //マナ
     protected bool isDead = false;
 
-    protected const int ofsX = 3; // 魔法陣エフェクトのオフセット値
+    protected const int ofsX_Cast = 3;  // 魔法陣エフェクトのオフセット値
+    protected const int ofsX_Block = 7; // 防御エフェクトのオフセット値
+    protected const float ofsZ = -4.8f;
     private Vector3 pos = new Vector3(-3, 5, 0); // Xは±を変更しますプレイヤー座標によって。
 
     /*エフェクト*/
     [SerializeField] GameObject eff_cursor;
     [SerializeField] GameObject eff_magicCircleS; // 魔法陣弱魔法
     [SerializeField] GameObject eff_magicCircleL; // 魔法陣強魔法
+    [SerializeField] GameObject eff_charge;       // チャージエフェクト
+    [SerializeField] GameObject eff_block;        // 防御エフェクト
+    [SerializeField] GameObject eff_damage;       // ヒット時エフェクト
+
     private GameObject effBox;
     private GameObject effBox_sub;
 
@@ -101,14 +107,14 @@ public abstract class CharacterBase : NetworkBehaviour
     // アニメーション発動用
     protected void AnimSet(int animSetNum)
     {
-        Quaternion rot=Quaternion.identity; // 初期化
+        Quaternion rot = Quaternion.identity; // 初期化
         rot *= Quaternion.Euler(0f, 0f, 90f); // Zだけ90度回転
         // Animnumに合わせて音源はセットしてある
         switch (animSetNum)
         {
             case 1: // 弱魔法詠唱
                 // プレイヤーＸ座標がマイナスならプレイヤー１
-                pos.x = this.gameObject.transform.position.x <= 0 ? +ofsX : -ofsX; // プレイヤー判断
+                pos.x = this.gameObject.transform.position.x <= 0 ? +ofsX_Cast : -ofsX_Cast; // プレイヤー判断
                 // SE再生
                 AudioManager.Instance.PlaySE(animSetNum);
                 // 魔法陣エフェクト生成
@@ -119,7 +125,7 @@ public abstract class CharacterBase : NetworkBehaviour
                 break;
             case 2: // 強魔法詠唱
                 // プレイヤーＸ座標がマイナスならプレイヤー１
-                pos.x = this.gameObject.transform.position.x <= 0 ? +ofsX : -ofsX; // プレイヤー判断
+                pos.x = this.gameObject.transform.position.x <= 0 ? +ofsX_Cast : -ofsX_Cast; // プレイヤー判断
                 // SE再生
                 AudioManager.Instance.PlaySE(animSetNum);
                 // 魔法陣エフェクト生成
@@ -131,9 +137,18 @@ public abstract class CharacterBase : NetworkBehaviour
             case 3: // チャージ
                 // SE再生
                 AudioManager.Instance.PlaySE(animSetNum);
+                effBox_sub = Instantiate(eff_charge, transform.position,Quaternion.identity);
+                Destroy(effBox_sub, 2f);
                 break;
-            case 5:
+            case 5: // ダメージ
                 // SE再生
+                if (effBox_sub != null)
+                {
+                    Destroy(effBox_sub);
+                }
+                // Yオフセット
+                effBox_sub = Instantiate(eff_damage, transform.position+new Vector3(0,1.5f,0), Quaternion.identity);
+                Destroy(effBox_sub, 0.9f); // 仮の数値
                 AudioManager.Instance.PlaySE(animSetNum);
                 break;
         }
@@ -167,8 +182,17 @@ public abstract class CharacterBase : NetworkBehaviour
     // 防御アニメーションイベント設定用
   　void BlockAnimEventSet()
     {
+        Quaternion rot = Quaternion.identity; // 初期化
+        pos.x = this.gameObject.transform.position.x <= 0 ? +ofsX_Block : -ofsX_Block; // プレイヤー判断
+        rot *= Quaternion.Euler(0f, 0f, 90f); // Zだけ90度回転
         // オブジェクトを有効化
         DefColBox.enabled = true;
+        //エフェクト
+        effBox_sub = Instantiate(
+            eff_block,
+            transform.position + new Vector3(pos.x, 8.5f, ofsZ),
+            rot);
+        Destroy(effBox_sub,1.6f);
         // SE再生
         AudioManager.Instance.PlaySE(4);
     }

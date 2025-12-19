@@ -48805,6 +48805,6 @@ AnimationClip:
     functionName: StartAnim
     data: 
     objectReferenceParameter: {fileID: 0}
-    floatParameter: 90
+    floatParameter: 100
     intParameter: 0
     messageOptions: 0

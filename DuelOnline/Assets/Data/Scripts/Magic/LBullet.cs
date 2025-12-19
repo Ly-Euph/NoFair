@@ -3,7 +3,7 @@ using UnityEngine;
 public class LBullet : MonoBehaviour
 {
     [SerializeField] private float speed = 10f;  // ˆÚ“®‘¬“x
-
+    [SerializeField] private GameObject eff_Break;
     private Vector3 direction;
 
     private void Update()
@@ -48,7 +48,9 @@ public class LBullet : MonoBehaviour
         {
             DestroyBullet();
         }
-        else if (other.CompareTag("Defense")) { return; } // –hŒä”»’è‚ÍŠÑ’Ê
+        else if (other.CompareTag("Defense")) {
+            GameObject obj = Instantiate(eff_Break, transform.position, Quaternion.identity);
+            return; } // –hŒä”»’è‚ÍŠÑ’Ê
         else // ã–‚–@‚ÍÁ‚µ‚Ä‚¢‚­
         {
             Destroy(other.gameObject);

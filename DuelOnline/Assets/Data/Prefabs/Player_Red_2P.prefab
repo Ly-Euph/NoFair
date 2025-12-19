@@ -1642,7 +1642,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.5
+  m_Radius: 1
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0.98, z: 0}
@@ -1680,6 +1680,9 @@ MonoBehaviour:
   eff_cursor: {fileID: 7506926220700421332, guid: e2331488d7923584cb6c29f12b6dbe24, type: 3}
   eff_magicCircleS: {fileID: 4978523699726826888, guid: 78894a8b66b89724598a5dc465dfa71a, type: 3}
   eff_magicCircleL: {fileID: 7009200451607144014, guid: 16fa245d713ba1d48bb22b2fb7d954bd, type: 3}
+  eff_charge: {fileID: 2365310736940933663, guid: c22145b0e799a4240a05aea837551bc7, type: 3}
+  eff_block: {fileID: 2251522109330783591, guid: c3dc0b787b5b42547a693a1bbf150ebb, type: 3}
+  eff_damage: {fileID: 5883226620086393739, guid: b7019716c415afd4c9d268aea077360b, type: 3}
   plCam: {fileID: 8704038107099376779}
   DefColBox: {fileID: 6244711204959660016}
   BulletPos: {fileID: 8584773920709484884}
@@ -1711,7 +1714,7 @@ CharacterController:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.5
