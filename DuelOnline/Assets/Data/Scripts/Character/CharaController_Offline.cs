@@ -127,6 +127,7 @@ public class CharaController_Offline : CharacterBase
             DataSingleton_Offline.Instance.PlMP = mp;
         }
         AnimSet(animNum);
+        effectManager.CommandTextInput("アイスボール！発動");
         effectManager.PlayWeakMagic();
     }
     public override void LAttack()
@@ -141,6 +142,7 @@ public class CharaController_Offline : CharacterBase
             DataSingleton_Offline.Instance.PlMP = mp;
         }
         AnimSet(animNum);
+        effectManager.CommandTextInput("ファイアーボール！発動");
         effectManager.PlayStrongMagic();
     }
     public override void Charge()
@@ -155,12 +157,14 @@ public class CharaController_Offline : CharacterBase
             DataSingleton_Offline.Instance.PlMP = mp;
         }
         AnimSet(animNum);
+        effectManager.CommandTextInput("マナチャージ！");
         effectManager.StartCharge();
     }
     public override void Block()
     {
         animNum = 4;
         AnimSet(animNum);
+        effectManager.CommandTextInput("ブロック！");
         effectManager.PlayGuard();
     }
     /// <summary>

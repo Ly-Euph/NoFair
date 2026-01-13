@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class EffectManager : MonoBehaviour
 {
     [Header("Effects")]
@@ -7,6 +6,12 @@ public class EffectManager : MonoBehaviour
     [SerializeField] private VignetteEffect vignetteEffect;
     [SerializeField] private CameraShake cameraShake;
     [SerializeField] private ChargeRiseEffect chargeEffect;
+    [SerializeField] private CommandText commandText;
+
+    public void CommandTextInput(string text)
+    {
+        commandText.InputCommand(text);
+    }
 
     public void StartCharge()
     {
