@@ -8,11 +8,7 @@ public class GameManager_Online : NetworkBehaviour
     [SerializeField] GameObject startObj;
     [SerializeField] GameObject gameCanvas;
 
-    [SerializeField] GameObject pl1;
-    [SerializeField] GameObject pl2;
-
-    [SerializeField] Transform posPl1;
-    [SerializeField] Transform posPl2;
+    bool isHost = false;
 
     // フェード開始までの時間
     float ctTimer = 3.5f;
@@ -20,6 +16,9 @@ public class GameManager_Online : NetworkBehaviour
     [SerializeField] Camera camP1;
     [SerializeField] Camera camP2;
 
+    // UIへの反映に
+    GameUIManager gameUI;
+    public float timeRemaining = 10.0f; // 開始時間（秒）
     // 勝敗結果を表す列挙型
     public enum BattleResult
     {
@@ -47,7 +46,7 @@ public class GameManager_Online : NetworkBehaviour
         switch (switchNo)
         {
             case 0: // 対戦前準備
-                bool isHost = GameLauncher.Instance.GetisHost;
+                isHost = GameLauncher.Instance.GetisHost;
                 // カメラを切り替える判定
                 // 各自プレイヤーで
                 if (DataSingleton_Online.Instance.IsReady)
@@ -56,11 +55,15 @@ public class GameManager_Online : NetworkBehaviour
                     {
                         Debug.Log("今回のホストです");
                         GameLauncher.Instance.InsNetRelay();
+                        // タイマーセット
+                        DataNetRelay.Instance.BattleTime = timeRemaining;
                     }
                     // 対戦画面用のオブジェクトを削除
                     startObj.SetActive(false);
                     // ゲーム中のUI表示
                     gameCanvas.SetActive(true);
+                    // スクリプト取得
+                    gameUI = GameObject.Find("UIManager").GetComponent<GameUIManager>();
                     // ネクスト処理
                     switchNo++;
                 }
@@ -71,6 +74,7 @@ public class GameManager_Online : NetworkBehaviour
                 switch (result)
                 {
                     case BattleResult.None:
+                        TimerCount();
                         return;
 
                     case BattleResult.Player1Win:
@@ -104,6 +108,28 @@ public class GameManager_Online : NetworkBehaviour
 
     }
 
+    private void TimerCount()
+    {
+        if (timeRemaining > 0f)
+        {
+            if (isHost)
+            {
+                timeRemaining = GameLauncher.Instance.TimerCount(timeRemaining);
+                DataNetRelay.Instance.BattleTime = timeRemaining;
+            }
+            else
+            {
+                timeRemaining = DataNetRelay.Instance.BattleTime;
+            }
+        }
+        else
+        {
+            DataSingleton_Online.Instance.IsReady = false;
+            gameUI.TimeOver();
+            switchNo++;
+        }
+        gameUI.TimerTextUpdate(timeRemaining);
+    }
     // 勝利判定関数
     private BattleResult CheckBattleResult()
     {
@@ -126,7 +152,7 @@ public class GameManager_Online : NetworkBehaviour
     // プレイヤー1=true,Player2=false
     private void WinsPlayer(bool isPlayer1)
     {
-        GameUIManager gameUI = GameObject.Find("UIManager").GetComponent<GameUIManager>();
+        gameUI = GameObject.Find("UIManager").GetComponent<GameUIManager>();
 
         gameUI.WinEff(isPlayer1);
         switchNo++;

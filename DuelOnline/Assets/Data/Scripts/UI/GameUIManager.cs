@@ -19,6 +19,8 @@ public class GameUIManager : MonoBehaviour
     Color mpCol_true = new Color(136f / 255f, 194f / 255f, 255f / 255f);
     Color mpCol_false = new Color(137f / 255f, 120f / 255f, 120f / 255f);
     #endregion
+    // 時間表示
+    [SerializeField] TextMeshProUGUI timerText;
 
     private int prevHp = -1;
     private int prevMp = -1;
@@ -69,6 +71,20 @@ public class GameUIManager : MonoBehaviour
 
         // 表示用コルーチン
         StartCoroutine(ShowWinSequence(tmpText, FusionText));
+    }
+    public void TimeOver()
+    {
+        // コンポーネント取得
+        TextMeshProUGUI tmpText = GameObject.Find("GameText").GetComponent<TextMeshProUGUI>();
+        string text = "TIME'S UP";
+        tmpText.text=text;
+        // テキストカラーを表示状態へ
+        tmpText.alpha = 1f;
+    }
+    public void TimerTextUpdate(float timer)
+    {
+        // テキストへ反映
+        timerText.text = Mathf.Floor(timer).ToString();
     }
 
     /// <summary>

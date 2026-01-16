@@ -8,6 +8,8 @@ public class DataNetRelay : NetworkBehaviour
     [Networked] public int Player1HP { get; set; }
     [Networked] public int Player2HP { get; set; }
 
+    [Networked] public float BattleTime { get; set; }
+
     public override void Spawned()
     {
         if (Instance != null && Instance != this)

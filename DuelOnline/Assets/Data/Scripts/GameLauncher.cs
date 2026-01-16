@@ -31,10 +31,6 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     public bool GetisHost => isHost;
 
     PlayerRef plRef;
-    
-    // 生成したプレイヤー保管
-    NetworkObject pl1;
-    NetworkObject pl2;
 
     private int INPUT = 0;
 
@@ -192,22 +188,8 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
                 index++;
             }
         }
-
-        //if (runner.IsServer)
-        //{
-        //    PlayerPosSet(pl1, p1Pos);
-        //    PlayerPosSet(pl2, p2Pos);
-        //}
         Debug.Log("キャラクター Spawn & PlayerRef 紐付け 完了");
     }
-
-    // 座標値セット
-    public void PlayerPosSet(NetworkObject plPre, Transform plSpawnPos)
-    {
-        plPre.transform.position = plSpawnPos.transform.position;
-        plPre.transform.rotation = plSpawnPos.transform.rotation;
-    }
-
 
     // ------------------------------------------------------------
     // OnInput：Fusion が呼ぶ入力セット関数
@@ -228,6 +210,14 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     {
         INPUT = num;
     }
+
+    public float TimerCount(float time)
+    {
+        time -= activeRunner.DeltaTime;
+        time = Mathf.Max(time, 0f);
+        return time;
+    }
+    
 
     // -----------------------------------
     // INetworkRunnerCallbacks の未使用コールバック

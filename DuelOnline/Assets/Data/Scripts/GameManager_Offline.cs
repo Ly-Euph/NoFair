@@ -6,6 +6,9 @@ public class GameManager_Offline : MonoBehaviour
     [SerializeField] GameObject startObj;
     [SerializeField] GameObject gameCanvas;
 
+    GameUIManager gameUI;
+
+    public float timeRemaining = 10.0f; // 開始時間（秒）
     // フェード開始までの時間
     float ctTimer = 2.5f;
 
@@ -39,8 +42,10 @@ public class GameManager_Offline : MonoBehaviour
                     startObj.SetActive(false);
                     // ゲーム中のUI表示
                     gameCanvas.SetActive(true);
+
+                    gameUI = GameObject.Find("UIManager").GetComponent<GameUIManager>();
                     // ネクスト処理
-                    switchNo ++;
+                    switchNo++;
                 }
                 break;
             case 1: // ラウンド終了処理
@@ -49,6 +54,8 @@ public class GameManager_Offline : MonoBehaviour
                 switch (result)
                 {
                     case BattleResult.None:
+                        // タイマー管理
+                        TimerCount();
                         return;
 
                     case BattleResult.Player1Win:
@@ -81,6 +88,22 @@ public class GameManager_Offline : MonoBehaviour
        
     }
 
+    private void TimerCount()
+    {
+        if (timeRemaining > 0f)
+        {
+            timeRemaining -= Time.deltaTime;
+            timeRemaining = Mathf.Max(timeRemaining, 0f); // マイナス防止
+        }
+        else
+        {
+            DataSingleton_Offline.Instance.IsReady = false;
+            gameUI.TimeOver();
+            switchNo++;
+        }
+        gameUI.TimerTextUpdate(timeRemaining);
+    }
+
     // 勝利判定関数
     private BattleResult CheckBattleResult()
     {
@@ -103,8 +126,6 @@ public class GameManager_Offline : MonoBehaviour
     // プレイヤー1=true,Player2=false
     private void WinsPlayer(bool isPlayer1)
     {
-        GameUIManager gameUI = GameObject.Find("UIManager").GetComponent<GameUIManager>();
-
         gameUI.WinEff(isPlayer1);
         switchNo++;
     }

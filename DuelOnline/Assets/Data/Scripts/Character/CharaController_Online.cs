@@ -13,10 +13,11 @@ public class CharaController_Online : CharacterBase
     Color ActionCol = new Color(186f / 255f, 0f / 255f, 255f / 255f); // 行動中のカラー
     Color DefCol; // 行動可能状態
 
+    // 画面効果エフェクト
+    private EffectManager effectManager;
+
     // 同期用変数
     [Networked] public int AnimNum { get; set; }
-    private int _prevAnimNum = -1;
-
 
     // プレイヤー１ならtrue
     // プレイヤー1になるのはHost
@@ -30,6 +31,7 @@ public class CharaController_Online : CharacterBase
     void Start()
     {
         Debug.Log($"[{name}] HasInputAuthority={Object.HasInputAuthority} PlayerRef={Runner.LocalPlayer}");
+        effectManager = GetComponentInChildren<EffectManager>();
     }
 
     public override void Spawned()
@@ -160,6 +162,8 @@ public class CharaController_Online : CharacterBase
         else { mp-=1; }
         animNum = 1;
         DataSingleton_Online.Instance.PlMP = mp;
+        effectManager.CommandTextInput("アイスボール！発動");
+        effectManager.PlayWeakMagic();
     }
     public override void LAttack()
     {
@@ -168,6 +172,8 @@ public class CharaController_Online : CharacterBase
         else { mp = mp - 3; }
         animNum = 2;
         DataSingleton_Online.Instance.PlMP = mp;
+        effectManager.CommandTextInput("ファイアーボール！発動");
+        effectManager.PlayStrongMagic();
     }
     public override void Charge()
     {
@@ -176,10 +182,14 @@ public class CharaController_Online : CharacterBase
         else { mp+=1; }
         animNum = 3;
         DataSingleton_Online.Instance.PlMP = mp;
+        effectManager.CommandTextInput("マナチャージ！");
+        effectManager.StartCharge();
     }
     public override void Block()
     {
         animNum = 4;
+        effectManager.CommandTextInput("ブロック！");
+        effectManager.PlayGuard();
     }
     /// <summary>
     /// ダメージヒット処理
@@ -202,13 +212,16 @@ public class CharaController_Online : CharacterBase
         // HP送信
         if (isPlayer1)
         {
+            if (hp <= 1) { effectManager.SetLowHP(true); }
             DataNetRelay.Instance.RPC_SetHP("Player1", hp);
         }
         else
         {
+            if (hp <= 1) { effectManager.SetLowHP(true); }
             DataNetRelay.Instance.RPC_SetHP("Player2", hp);
         }
         RPC_PlayAnim(5);
+        effectManager.PlayDamage();
     }
 
     // アニメーション起動時のイベント
