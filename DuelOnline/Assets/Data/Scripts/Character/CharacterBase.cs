@@ -218,6 +218,22 @@ public abstract class CharacterBase : NetworkBehaviour
         float totalX = Mathf.Abs(end.x - start.x) / minScreen;
         float totalY = Mathf.Abs(end.y - start.y) / minScreen;
 
+        // --- 3️⃣ V字（折れ線） ---
+        if (IsVShape(pts, minScreen))
+        {
+            Debug.Log("Command C: V字ジェスチャー");
+            OnV();
+            return;
+        }
+
+        // --- 4️⃣ 逆V（折れ線） ---
+        if (IsRVShape(pts, minScreen))
+        {
+            Debug.Log("Command D: 逆Vジェスチャー");
+            OnRV();
+            return;
+        }
+
         // --- 1️⃣ 横線（左右スワイプ） ---
         if (totalX > 0.15f && totalY < 0.08f)
         {
@@ -234,21 +250,7 @@ public abstract class CharacterBase : NetworkBehaviour
             return;
         }
 
-        // --- 3️⃣ V字（折れ線） ---
-        if (IsVShape(pts, minScreen))
-        {
-            Debug.Log("Command C: V字ジェスチャー");
-            OnV();
-            return;
-        }
-
-        // --- 4️⃣ 円（ループ） ---
-        if (IsCircle(pts, minScreen))
-        {
-            Debug.Log("Command D: 円ジェスチャー");
-            OnCircle();
-            return;
-        }
+       
 
         Debug.Log("ジェスチャー認識できず");
     }
@@ -259,30 +261,49 @@ public abstract class CharacterBase : NetworkBehaviour
     {
         if (pts.Count < 10) return false;
 
-        int mid = pts.Count / 2;
         Vector2 start = pts[0];
-        Vector2 middle = pts[mid];
+        Vector2 middle = pts[pts.Count / 2];
         Vector2 end = pts[^1];
 
-        bool downUp =
-            (start.y - middle.y) / minScreen > 0.08f &&
-            (end.y - middle.y) / minScreen > 0.08f;
+        // ジェスチャー自身のサイズ
+        float width = GetMaxX(pts) - GetMinX(pts);
+        float height = GetMaxY(pts) - GetMinY(pts);
+        float size = Mathf.Max(width, height);
 
-        float xMove = Mathf.Abs(end.x - start.x) / minScreen;
+        // 小さすぎる入力は無視（誤タップ防止）
+        if (size < Screen.height * 0.05f)
+            return false;
 
-        return downUp && xMove < 0.15f;
+        // 谷の深さ（∨）
+        float valley = Mathf.Min(start.y, end.y) - middle.y;
+
+        // 谷が十分に深いか（比率で判断）
+        if (valley / size < 0.25f)
+            return false;
+
+        return true;
     }
-   private bool IsCircle(List<Vector2> pts, float minScreen)
+   private bool IsRVShape(List<Vector2> pts, float minScreen)
     {
+        if (pts.Count < 10) return false;
+
         Vector2 start = pts[0];
+        Vector2 middle = pts[pts.Count / 2];
         Vector2 end = pts[^1];
 
-        float closeDist = Vector2.Distance(start, end) / minScreen;
+        float width = GetMaxX(pts) - GetMinX(pts);
+        float height = GetMaxY(pts) - GetMinY(pts);
+        float size = Mathf.Max(width, height);
 
-        float width = (GetMaxX(pts) - GetMinX(pts)) / minScreen;
-        float height = (GetMaxY(pts) - GetMinY(pts)) / minScreen;
+        if (size < Screen.height * 0.05f)
+            return false;
 
-        return closeDist < 0.05f && width > 0.12f && height > 0.12f;
+        float peak = middle.y - Mathf.Max(start.y, end.y);
+
+        if (peak / size < 0.25f)
+            return false;
+
+        return true;
     }
 
     private float GetMaxX(List<Vector2> pts) => Mathf.Max(pts.ConvertAll(p => p.x).ToArray());
@@ -310,9 +331,9 @@ public abstract class CharacterBase : NetworkBehaviour
         LAttack(); //強魔法攻撃
     }
 
-    private void OnCircle()
+    private void OnRV()
     {
-        Debug.Log("⭕ 円アクション発動！");
+        Debug.Log("⭕ 逆Vアクション発動！");
         SAttack(); //弱魔法攻撃
     }
     #endregion
