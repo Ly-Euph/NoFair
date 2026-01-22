@@ -46,6 +46,11 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
         }
         Instance = this;
         DontDestroyOnLoad(gameObject); // シーン切り替えでも保持
+
+        // VSyncCount を Dont Sync に変更
+        QualitySettings.vSyncCount = 0;
+        // 60fpsを目標に設定
+        Application.targetFrameRate = 60;
     }
 
     /// <summary>

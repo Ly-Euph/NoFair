@@ -141,16 +141,23 @@ public abstract class CharacterBase : NetworkBehaviour
                 Destroy(effBox_sub, 2f);
                 break;
             case 5: // ダメージ
-                // 直前のエフェクトを削除
-                if (effBox_sub != null)
-                {
-                    Destroy(effBox_sub);
-                }
                 // Yオフセット
                 effBox_sub = Instantiate(eff_damage, transform.position+new Vector3(0,1.5f,0), Quaternion.identity);
                 Destroy(effBox_sub, 0.9f); // 仮の数値
                 // SE再生
                 AudioManager.Instance.PlaySE(animSetNum);
+
+                // 直前のエフェクトを削除
+                if (effBox_sub != null)
+                {
+                    Destroy(effBox_sub);
+                }
+                // 描画トレイルエフェクトも
+                if (effBox != null)
+                {
+                    Destroy(effBox);
+                }
+                isDrawing = false;
                 break;
         }
         animator.Play(animName[animSetNum]);
