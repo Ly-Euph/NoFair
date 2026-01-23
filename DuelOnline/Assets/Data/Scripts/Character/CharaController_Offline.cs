@@ -26,6 +26,33 @@ public class CharaController_Offline : CharacterBase
     private float timer = 0;
     // NPC専用で行動時間を制御する
     private bool isAct = true;
+
+    // 様子見関連
+    private bool isThinking = false;
+    private float thinkTimer = 0f;
+
+    [SerializeField] private float thinkMin = 0.2f;
+    [SerializeField] private float thinkMax = 0.6f;
+
+    private float currentThinkTime = 0f;
+
+    private bool saveAct = false; 
+
+    #region BotLearning
+
+    // AIの学習データ
+    private BotAISaveData aiData;
+
+    // 保存ファイル名
+    private const string AI_FILE_NAME = "BotAI.json";
+
+    // 学習倍率（aiData.learnedBias の参照）
+    private float[] learnedBias;
+
+    // 直前に選択した行動（学習用）
+    private int lastActionIndex = -1;
+
+    #endregion
     #endregion
     // デバッグプレビュー
     [SerializeField]private bool isPreview = false; 
@@ -68,14 +95,33 @@ public class CharaController_Offline : CharacterBase
             animNum = 0;
             return;
         }
-        // 操作不能
-        /* ----条件---- */
-        // 自分の死亡時、相手の死亡時
-        // ゲームマネージャーの対戦合図待ち
-        if (isDead||!DataSingleton_Offline.Instance.IsReady) { return; }
+
+        // プレイヤー1P2P判断
+        // BOT学習
+        if (!saveAct&&isBot)
+        {
+            if (!isHostPlayer)
+            {
+                if (DataSingleton_Offline.Instance.PlHP <= 0) { LearnFromBattle(true); saveAct = true; }
+            }
+        }
+
+            // 操作不能
+            /* ----条件---- */
+            // 自分の死亡時、相手の死亡時
+            // ゲームマネージャーの対戦合図待ち
+            if (isDead||!DataSingleton_Offline.Instance.IsReady) { return; }
         // HPなくなったら
         if (hp <= 0)
         {
+            // BOT側の負け判定を記録
+            if (isBot)
+            {
+                if (!isHostPlayer)
+                {
+                    if (DataSingleton_Offline.Instance.PlHP <= 0) { LearnFromBattle(false); saveAct = true; }
+                }
+            }
             animNum = 6;
             AnimSet(animNum);
             // カラーチェンジ
@@ -94,12 +140,23 @@ public class CharaController_Offline : CharacterBase
             }
             if (isBot)
             {
+                // クールタイム中
                 if (isAct)
                 {
                     CTTimer();
                     return;
                 }
+
+                // 様子見中
+                if (isThinking)
+                {
+                    ThinkTimer();
+                    return;
+                }
+
+                // 行動開始
                 PerformAction();
+                isThinking = false;
                 isAct = true;
             }
             else
@@ -223,20 +280,44 @@ public class CharaController_Offline : CharacterBase
     #region BotMethod
     private void BotAwake()
     {
-        // 行動を配列に登録
-        actions = new ActionDelegate[] { SAttack, LAttack, Charge, Block };
+        // 行動登録
+        actions = new ActionDelegate[]
+        {
+        SAttack,   // 0
+        LAttack,   // 1
+        Charge,    // 2
+        Block      // 3
+        };
 
-        // 各行動の基本確率
-        actionProbabilities = new float[] { 0.3f, 0.2f, 0.3f, 0.2f };
+        // ★ 行動確率配列を初期化（超重要）
+        actionProbabilities = new float[4];
+
+        // 学習データをロード
+        aiData = BotAIStorage.Load(AI_FILE_NAME);
+
+        // 学習倍率を参照
+        learnedBias = aiData.learnedBias;
     }
+
+    /// <summary>
+    /// 学習結果を行動確率に反映する
+    /// </summary>
+    private void ApplyLearnedBias()
+    {
+        for (int i = 0; i < actionProbabilities.Length; i++)
+        {
+            actionProbabilities[i] *= learnedBias[i];
+        }
+    }
+
     private void PerformAction()
     {
-        // 状況に応じて確率を更新
         UpdateProbabilities();
+        ApplyLearnedBias();
 
-        // 使用可能な行動をリストアップ
         var validActions = new List<ActionDelegate>();
         var validProbs = new List<float>();
+        var validActionIndices = new List<int>();
 
         for (int i = 0; i < actions.Length; i++)
         {
@@ -244,22 +325,58 @@ public class CharaController_Offline : CharacterBase
             {
                 validActions.Add(actions[i]);
                 validProbs.Add(actionProbabilities[i]);
+                validActionIndices.Add(i);
             }
         }
 
-        // 確率に応じてランダム選択
-        float total = 0;
+        float total = 0f;
         foreach (var p in validProbs) total += p;
+
+        // フェイルセーフ
+        if (total <= 0f)
+        {
+            lastActionIndex = 2; // Charge
+            Charge();
+            return;
+        }
+
         float rand = UnityEngine.Random.value * total;
-        float sum = 0;
+        float sum = 0f;
+
         for (int i = 0; i < validActions.Count; i++)
         {
             sum += validProbs[i];
             if (rand <= sum)
             {
+                lastActionIndex = validActionIndices[i];
                 validActions[i].Invoke();
                 break;
             }
+        }
+    }
+
+    /// <summary>
+    /// バトル結果から学習する
+    /// </summary>
+    public void LearnFromBattle(bool win)
+    {
+        if (lastActionIndex < 0) return;
+
+        float reward = win ? 0.1f : -0.1f;
+
+        learnedBias[lastActionIndex] += reward;
+        learnedBias[lastActionIndex] =
+            Mathf.Clamp(learnedBias[lastActionIndex], 0.5f, 2.0f);
+        aiData.battleCount++;
+        AISave();
+    }
+
+    private void AISave()
+    {
+        // エディタでは保存しない
+        if (isBot && !Application.isEditor)
+        {
+            BotAIStorage.Save(AI_FILE_NAME, aiData);
         }
     }
 
@@ -316,8 +433,23 @@ public class CharaController_Offline : CharacterBase
         timer += Time.deltaTime;
         if (timer >= 0.7f)
         {
-            timer = 0;
+            timer = 0f;
             isAct = false;
+
+            // ★ ランダムな様子見時間を決定
+            currentThinkTime = Random.Range(thinkMin, thinkMax);
+            thinkTimer = 0f;
+            isThinking = true;
+        }
+    }
+
+    private void ThinkTimer()
+    {
+        thinkTimer += Time.deltaTime;
+        if (thinkTimer >= currentThinkTime)
+        {
+            thinkTimer = 0f;
+            isThinking = false; // 行動可能
         }
     }
     #endregion

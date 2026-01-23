@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Video;
+using UnityEngine.UI;
 
 public class TutorialPanel : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class TutorialPanel : MonoBehaviour
     [SerializeField] GameObject IceBox;
 
     private GameObject[] BoxTbl;
+
+    [SerializeField] RawImage rawImgObj;
+
 
     // クリップ名を保管
     private string video;
@@ -27,15 +31,43 @@ public class TutorialPanel : MonoBehaviour
         IceBox
         };
     }
+
+    /// <summary>
+    /// 遊び方ボタンを押したときに表示するパネルを初期化すること
+    /// </summary>
+    public void SettingPanel()
+    {
+        if (BoxTbl == null ) {
+         BoxTbl = new GameObject[]
+         {
+           RuleBox,
+           BlockBox,
+           ChargeBox,
+           FireBox,
+           IceBox
+          };
+        }
+        rawImgObj.color = new Color(1, 1, 1, 0);
+        // 入ってる動画も消しておく
+        videoPlayer.clip = null;
+        video = "";
+        // ルールを表示する
+        ActiveFunc(0);
+    }
+
     public void ActiveBox()
     {
         // 自身のクリップ名から表示するオブジェクトを指定する
 
-        if (videoPlayer.clip.name == null) { video = ""; }
-        else{ video = videoPlayer.clip.name; }
+        if (videoPlayer.clip== null) { video = ""; }
+        else
+        {
+            video = videoPlayer.clip.name;
+        }
         switch (video)
         {
             case "":
+                rawImgObj.color = new Color(1, 1, 1, 0);
                 ActiveFunc(0);
                 break;
             case "Block":
@@ -56,6 +88,12 @@ public class TutorialPanel : MonoBehaviour
     // 全て表示後に特定の物を表示にする
     private void ActiveFunc(int number)
     {
+        // その他
+        // オブジェクトが非表示ならば
+        if (rawImgObj.color.a == 0&&number!=0)
+        {
+            rawImgObj.color = new Color(1, 1, 1, 1);
+        }
         for (int i = 0; i < BoxTbl.Length; i++)
         {
             BoxTbl[i].SetActive(false);
