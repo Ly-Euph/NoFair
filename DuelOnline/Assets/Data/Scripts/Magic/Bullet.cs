@@ -4,6 +4,7 @@ public class Bullet : MonoBehaviour
 {
     [SerializeField] private float speed = 10f;  // ˆÚ“®‘¬“x
     [SerializeField] private GameObject eff_BlockHit; // –hŒä‚³‚ê‚½
+    [SerializeField] private GameObject eff_Break;
     private Vector3 direction;
 
     private void Update()
@@ -53,6 +54,7 @@ public class Bullet : MonoBehaviour
         }
         else
         {
+            GameObject obj = Instantiate(eff_Break, transform.position, Quaternion.identity);
             DestroyBullet();
         }
     }

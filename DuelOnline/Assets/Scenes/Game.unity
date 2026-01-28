@@ -5563,8 +5563,10 @@ MonoBehaviour:
   r: 0
   g: 176
   b: 255
-  isBot: 1
+  isBot: 0
   isHostPlayer: 1
+  thinkMin: 0.2
+  thinkMax: 0.6
   isPreview: 0
 --- !u!4 &1534416835959487376
 Transform:
@@ -9129,6 +9131,8 @@ MonoBehaviour:
   b: 115
   isBot: 1
   isHostPlayer: 0
+  thinkMin: 0.2
+  thinkMax: 0.6
   isPreview: 0
 --- !u!4 &4462581586211504438
 Transform:

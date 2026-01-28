@@ -123,6 +123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 80
   eff_BlockHit: {fileID: 6050277281430088870, guid: 6b6fbc41676287947b230f859ff35ded, type: 3}
+  eff_Break: {fileID: 17712629716089447, guid: dd3f312b4b0bf084987fd7b6337a8b62, type: 3}
 --- !u!65 &-5255737770238397435
 BoxCollider:
   m_ObjectHideFlags: 0

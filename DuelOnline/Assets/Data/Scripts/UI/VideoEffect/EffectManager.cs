@@ -48,7 +48,7 @@ public class EffectManager : MonoBehaviour
     public void PlayStrongMagic()
     {
         flashEffect.Flash(Color.red * 0.6f, 0.4f);
-        StartCoroutine(cameraShake.Shake(0.4f, 0.8f));
+        StartCoroutine(cameraShake.Shake(0.15f, 0.5f));
     }
 
     public void SetLowHP(bool enable)

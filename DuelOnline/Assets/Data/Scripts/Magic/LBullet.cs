@@ -46,6 +46,7 @@ public class LBullet : MonoBehaviour
         }
         else if (other.CompareTag("LMagic")) // “¯‚¶–‚–@“¯Žm‚È‚ç‘ŠŽE
         {
+            GameObject obj = Instantiate(eff_Break, transform.position, Quaternion.identity);
             DestroyBullet();
         }
         else if (other.CompareTag("Defense")) {
