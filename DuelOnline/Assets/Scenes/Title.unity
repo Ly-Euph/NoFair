@@ -506,7 +506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   videoPlayer: {fileID: 1840210372}
-  videoClip: {fileID: 32900000, guid: 92f17848b8ae83a4d8a4a8da8f101c6c, type: 3}
+  videoClip: {fileID: 32900000, guid: 35e5cfd3034886c45a5439d29fa03b79, type: 3}
   panel: {fileID: 1840210373}
 --- !u!1 &62409115
 GameObject:
@@ -5341,7 +5341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   videoPlayer: {fileID: 1840210372}
-  videoClip: {fileID: 32900000, guid: 5ddee53b545e32e49a34202c6178593d, type: 3}
+  videoClip: {fileID: 32900000, guid: d5a2308e71335a54ba55cef1205c036a, type: 3}
   panel: {fileID: 1840210373}
 --- !u!1 &945500355
 GameObject:
@@ -7384,7 +7384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   videoPlayer: {fileID: 1840210372}
-  videoClip: {fileID: 32900000, guid: 26e1c942537567e418f9e24cbc76d19f, type: 3}
+  videoClip: {fileID: 32900000, guid: da99d7bbe6729454d878c7ab8b10a865, type: 3}
   panel: {fileID: 1840210373}
 --- !u!1 &1204289069
 GameObject:
@@ -8378,7 +8378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   videoPlayer: {fileID: 1840210372}
-  videoClip: {fileID: 32900000, guid: 46043444518b9a040ba75f5d3a97b312, type: 3}
+  videoClip: {fileID: 32900000, guid: 6bce757f06994204480a7d2cec2e35a9, type: 3}
   panel: {fileID: 1840210373}
 --- !u!1 &1344224392
 GameObject:
